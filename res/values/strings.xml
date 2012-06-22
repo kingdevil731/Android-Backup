@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Android Backup</string>
+    <string name="information_tab_title">Information</string>
+    <string name="tasks_tab_title">Tasks</string>
+    <string name="applications_tab_title">Applications</string>
+    <string name="schedule_tab_title">Schedule</string>
+
+</resources>
