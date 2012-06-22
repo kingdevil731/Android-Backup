@@ -3,6 +3,8 @@ package com.Akkad.AndroidBackup;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
@@ -45,4 +47,14 @@ public class AndroidBackupActivity extends TabActivity {
 		tabHost.addTab(applicationSpec); // Add Applications tab
 		tabHost.addTab(scheduleSpec); // Add Schedule tab
 	}
+
+	/**
+	 * Called first time user clicks on the menu button
+	 */
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.main_menu, menu);
+		return true;
+	}
+
 }

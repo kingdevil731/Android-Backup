@@ -6,5 +6,7 @@
     <string name="tasks_tab_title">Tasks</string>
     <string name="applications_tab_title">Applications</string>
     <string name="schedule_tab_title">Schedule</string>
+    <string name="settings_mainmenu_item">Settings</string>
+    <string name="help_mainmenu_item">Help</string>
 
 </resources>
