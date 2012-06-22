@@ -10,7 +10,6 @@ import android.widget.TabHost.TabSpec;
 
 public class AndroidBackupActivity extends TabActivity {
 	/** Called when the activity is first created. */
-	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
