@@ -8,9 +8,12 @@ import android.view.MenuInflater;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
+import com.stericson.RootTools.RootTools;
+
 public class AndroidBackupActivity extends TabActivity {
 	/** Called when the activity is first created. */
 	public void onCreate(Bundle savedInstanceState) {
+		RootTools.debugMode = true;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 

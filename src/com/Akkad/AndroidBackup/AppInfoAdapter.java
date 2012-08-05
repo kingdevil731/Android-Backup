@@ -4,7 +4,9 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,8 +55,8 @@ public class AppInfoAdapter extends BaseAdapter {
 		}
 
 		// load controls from layout resources
-		ImageView ivAppIcon = (ImageView) v.findViewById(R.id.ivIcon);
-		TextView tvAppName = (TextView) v.findViewById(R.id.tvName);
+		ImageView ivAppIcon = (ImageView) v.findViewById(R.id.app_icon);
+		TextView tvAppName = (TextView) v.findViewById(R.id.app_name);
 
 		// set data to display
 		ivAppIcon.setImageDrawable(entry.loadIcon(mPackManager));

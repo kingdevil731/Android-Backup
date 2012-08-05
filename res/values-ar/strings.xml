@@ -8,5 +8,20 @@
     <string name="schedule_tab_title">الجدول</string>
     <string name="settings_mainmenu_item">إعدادات</string>
     <string name="help_mainmenu_item">مساعدة</string>
+    <string name="yes">نعم</string>
+    <string name="no">لا</string>
+    <string name="applications_popup_run">تشغيل</string>
+    <string name="applications_popup_uninstall">حذف التطبيق</string>
+    <string name="applications_popup_Backup">Backup</string>
+    <string name="applications_popup_wipe_data">Data مسح</string>
+    <string name="uninstall_system_app_warning_dialog_title">تحذير</string>
+    <string name="uninstall_system_app_warning_dialog_text"> is a System package that may be needed for the phone to work properly. Removing this package may break your phone, Would you like to uninstall it (At your own risk).</string>
+    <string name="toast_notification_apprun_notfound">التطبيق غير موجود</string>
+    <string name="toast_notification_appdata_deleted">Data Deleted!</string>
+    <string name="toast_notification_app_uninstalled_root">تمت إزالة التطبيق</string>
+    <string name="information_tab_RootAccess">Root access:</string>
+    <string name="information_tab_BusyBox">BusyBox:</string>
+    <string name="information_tab_offerBusyBox">A BusyBox installation has not been found. Would you like to download it from the Google Play Store?</string>
+    <string name="information_tab_message_BusyBox_Not_Found">BusyBox لم يتم العثور على</string>
 
 </resources>
