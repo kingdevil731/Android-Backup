@@ -23,5 +23,7 @@
     <string name="information_tab_BusyBox">BusyBox:</string>
     <string name="information_tab_offerBusyBox">A BusyBox installation has not been found. Would you like to download it from the Google Play Store?</string>
     <string name="information_tab_message_BusyBox_Not_Found">BusyBox Not Found</string>
+    <string name="wipe_dalvik_cache_warning_dialog_title">Warning</string>
+    <string name="wipe_dalvik_cache_warning_dialog_text">This will clear the Dalvik Cache of your device. The device will be rebooted after this process. It\'s normal for the device to take a long time to boot after this operation. Do you want to proceed?</string>
 
 </resources>

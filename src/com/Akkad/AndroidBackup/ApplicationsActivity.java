@@ -1,8 +1,6 @@
 package com.Akkad.AndroidBackup;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeoutException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,8 +21,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.stericson.RootTools.RootToolsException;
 
 public class ApplicationsActivity extends Activity {
 
@@ -84,18 +80,8 @@ public class ApplicationsActivity extends Activity {
 
 								uninstallSystemAppWarningDialog.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface dialog, int id) {
-										try {
-											core.UninstallAppRoot(selectedApp.packageName, selectedApp.sourceDir);
-										} catch (IOException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										} catch (RootToolsException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										} catch (TimeoutException e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
-										}
+
+										core.UninstallAppRoot(selectedApp.packageName, selectedApp.sourceDir);
 
 										dialogUninstallButton.setEnabled(false);
 										dialogRunButton.setEnabled(false);
@@ -108,18 +94,7 @@ public class ApplicationsActivity extends Activity {
 								uninstallSystemAppWarningDialog.show();
 
 							} else {
-								try {
-									core.UninstallAppRoot(selectedApp.packageName, selectedApp.sourceDir);
-								} catch (IOException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								} catch (RootToolsException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								} catch (TimeoutException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
+								core.UninstallAppRoot(selectedApp.packageName, selectedApp.sourceDir);
 
 								dialogUninstallButton.setEnabled(false);
 								dialogRunButton.setEnabled(false);
@@ -141,21 +116,11 @@ public class ApplicationsActivity extends Activity {
 					dialogWipeDataButton.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
-
-							try {
-								core.wipeAppData(selectedApp.packageName);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+							if (core.wipeAppData(selectedApp.packageName)) {
+								Toast.makeText(ApplicationsActivity.this, selectedApp.loadLabel(getPackageManager()) + "'s data deleted", Toast.LENGTH_LONG).show();
+							} else {
+								Toast.makeText(ApplicationsActivity.this, selectedApp.loadLabel(getPackageManager()) + "'s data not deleted", Toast.LENGTH_LONG).show();
 							}
-							// Toast.makeText(ApplicationsActivity.this, selectedApp.packageName + "'s data not deleted", Toast.LENGTH_LONG).show();
-
-							// Toast.makeText(ApplicationsActivity.this, selectedApp.loadLabel(getPackageManager()) + "'s data not deleted", Toast.LENGTH_LONG).show();
-
-							// Toast.makeText(ApplicationsActivity.this, selectedApp.loadLabel(getPackageManager()) + "'s " + getString(R.string.toast_notification_appdata_deleted), Toast.LENGTH_LONG).show();
 						}
 					});
 				} else {
@@ -165,9 +130,7 @@ public class ApplicationsActivity extends Activity {
 					if (core.isSystemApp(selectedApp.sourceDir)) // disable uninstall button if the app is a system app and the device is not rooted
 					{
 						dialogUninstallButton.setEnabled(false); // disable the wipe data button
-
 					}
-
 				}
 
 				dialog.show();
