@@ -1,12 +1,11 @@
 package com.Akkad.AndroidBackup;
 
+import java.util.Collections;
 import java.util.List;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,4 +64,5 @@ public class AppInfoAdapter extends BaseAdapter {
 		// return view
 		return v;
 	}
+
 }

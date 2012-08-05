@@ -1,5 +1,6 @@
 package com.Akkad.AndroidBackup;
 
+import java.util.Collections;
 import java.util.List;
 
 import android.app.Activity;
@@ -149,8 +150,11 @@ public class ApplicationsActivity extends Activity {
 	 * @return list of installed applications
 	 */
 	@SuppressWarnings("rawtypes")
-	public static List getInstalledApplication(Context c) {
-		return c.getPackageManager().getInstalledApplications(PackageManager.GET_META_DATA);
+	public static List<ApplicationInfo> getInstalledApplication(Context context) {
+		PackageManager packageManager = context.getPackageManager();
+		List<ApplicationInfo> apps = packageManager.getInstalledApplications(0);
+		Collections.sort(apps, new ApplicationInfo.DisplayNameComparator(packageManager));
+		return apps;
 	}
 
 	/**
