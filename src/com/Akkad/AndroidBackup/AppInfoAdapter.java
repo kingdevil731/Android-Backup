@@ -1,11 +1,12 @@
 package com.Akkad.AndroidBackup;
 
-import java.util.Collections;
 import java.util.List;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,7 +60,12 @@ public class AppInfoAdapter extends BaseAdapter {
 
 		// set data to display
 		ivAppIcon.setImageDrawable(entry.loadIcon(mPackManager));
-		tvAppName.setText(entry.loadLabel(mPackManager));
+		try {
+			PackageInfo info = mPackManager.getPackageInfo(entry.packageName, 0);
+			tvAppName.setText(entry.loadLabel(mPackManager) + " " + info.versionName);
+		} catch (NameNotFoundException e) {
+			tvAppName.setText(entry.loadLabel(mPackManager));
+		}
 
 		// return view
 		return v;

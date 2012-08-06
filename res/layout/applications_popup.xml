@@ -4,10 +4,18 @@
     android:layout_height="fill_parent" >
 
     <Button
+        android:id="@+id/applicationsDialogButtonBackup"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/applications_popup_backup" />
+
+    <Button
         android:id="@+id/applicationsDialogButtonRun"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_below="@+id/applicationsDialogButtonBackup"
         android:text="@string/applications_popup_run" />
 
     <Button

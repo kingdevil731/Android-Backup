@@ -16,6 +16,12 @@ import com.stericson.RootTools.RootToolsException;
 public class Core extends Activity {
 	private static final String TAG = "Android Backup Core";
 
+	public boolean backupApplication() {
+
+		return true;
+
+	}
+
 	/**
 	 * Wipes the Apps data located in /data/data/com.packageName
 	 * 
@@ -43,12 +49,11 @@ public class Core extends Activity {
 	}
 
 	/**
-	 * Wipes the Dalvik Cache
+	 * Wipes the Dalvik Cache and reboots the device
 	 * 
 	 * @return if the Dalvik Cache was wiped
 	 */
 	public void wipeDalvikCache() {
-
 		CommandCapture command = new CommandCapture(0, "cd /data/dalvik-cache", "rm *", "reboot");
 		try {
 			RootTools.getShell(true).add(command).waitForFinish();
@@ -149,6 +154,18 @@ public class Core extends Activity {
 	 */
 	public boolean isSystemApp(String apkLocation) {
 		return apkLocation.toLowerCase().contains("/system/app");
+	}
+
+	/**
+	 * Reboots the device
+	 */
+	public void rebootDevice() {
+		CommandCapture command = new CommandCapture(0, "reboot");
+		try {
+			RootTools.getShell(true).add(command).waitForFinish();
+		} catch (Exception e) {
+			return;
+		}
 	}
 
 }

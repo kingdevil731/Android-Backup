@@ -12,7 +12,7 @@
     <string name="no">No</string>
     <string name="applications_popup_run">Run</string>
     <string name="applications_popup_uninstall">Uninstall</string>
-    <string name="applications_popup_Backup">Backup</string>
+    <string name="applications_popup_backup">Backup</string>
     <string name="applications_popup_wipe_data">Wipe Data</string>
     <string name="uninstall_system_app_warning_dialog_title">Warning</string>
     <string name="uninstall_system_app_warning_dialog_text"> is a System package that may be needed for the phone to work properly. Removing this package may break your phone, Would you like to uninstall it (At your own risk).</string>

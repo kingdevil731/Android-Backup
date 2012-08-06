@@ -10,7 +10,7 @@ import android.widget.ListView;
 
 public class TasksActivity extends ListActivity {
 	Core core = new Core();
-	String[] tasks = { "Wipe Dalvik Cache" };
+	String[] tasks = { "Wipe Dalvik Cache", "Reboot Device" };
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -41,6 +41,9 @@ public class TasksActivity extends ListActivity {
 			wipeDalvikCacheWarningDialog.setNegativeButton(getString(R.string.no), null);
 
 			wipeDalvikCacheWarningDialog.show();
+			break;
+		case 1:
+			core.rebootDevice();
 			break;
 		}
 

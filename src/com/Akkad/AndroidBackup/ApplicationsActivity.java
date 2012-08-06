@@ -113,7 +113,6 @@ public class ApplicationsActivity extends Activity {
 				Button dialogWipeDataButton = (Button) dialog.findViewById(R.id.applicationsDialogButtonWipeData);
 				// TODO this check is not needed
 				if (InformationActivity.isRooted()) {
-
 					dialogWipeDataButton.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
@@ -142,14 +141,13 @@ public class ApplicationsActivity extends Activity {
 	}
 
 	/**
-	 * Get all installed application on mobile and return a list
+	 * Get all installed application on device and return a list
 	 * 
 	 * @param c
 	 *            Context of application
 	 * 
 	 * @return list of installed applications
 	 */
-	@SuppressWarnings("rawtypes")
 	public static List<ApplicationInfo> getInstalledApplication(Context context) {
 		PackageManager packageManager = context.getPackageManager();
 		List<ApplicationInfo> apps = packageManager.getInstalledApplications(0);
