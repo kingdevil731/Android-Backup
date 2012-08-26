@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Android Backup</string>
     <string name="information_tab_title">معلومات</string>
     <string name="tasks_tab_title">المهام</string>
@@ -15,15 +14,19 @@
     <string name="applications_popup_backup">Backup</string>
     <string name="applications_popup_wipe_data">Data مسح</string>
     <string name="uninstall_system_app_warning_dialog_title">تحذير</string>
-    <string name="uninstall_system_app_warning_dialog_text"> is a System package that may be needed for the phone to work properly. Removing this package may break your phone, Would you like to uninstall it (At your own risk).</string>
+    <string name="uninstall_system_app_warning_dialog_text"> is a System package that may be needed for the device to work properly. Removing this package may break your phone, Would you like to uninstall it (At your own risk).</string>
     <string name="toast_notification_apprun_notfound">التطبيق غير موجود</string>
-    <string name="toast_notification_appdata_deleted">Data Deleted!</string>
+    <string name="toast_notification_appdata_deleted">!تم حذف البيانات</string>
     <string name="toast_notification_app_uninstalled_root">تمت إزالة التطبيق</string>
     <string name="information_tab_RootAccess">Root access:</string>
     <string name="information_tab_BusyBox">BusyBox:</string>
     <string name="information_tab_offerBusyBox">A BusyBox installation has not been found. Would you like to download it from the Google Play Store?</string>
     <string name="information_tab_message_BusyBox_Not_Found">BusyBox لم يتم العثور على</string>
-    <string name="wipe_dalvik_cache_warning_dialog_title">Warning</string>
+	<string name="information_tab_systemStorage">System:</string>
+    <string name="information_tab_dataStorage">Data:</string>
+    <string name="information_tab_internalStorage">Internal:</string>    
+	<string name="wipe_dalvik_cache_warning_dialog_title">احذر</string>
     <string name="wipe_dalvik_cache_warning_dialog_text">This will clear the Dalvik Cache of your device. The device will be rebooted after this process. It\'s normal for the device to take a long time to boot after this operation. Do you want to proceed?</string>
-
+	<string name="force_close_app">إغلاق التطبيق</string>
+    <string name="open_system_app_info">فتح معلومات البرنامج </string>
 </resources>
