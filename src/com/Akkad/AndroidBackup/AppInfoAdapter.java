@@ -7,6 +7,8 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ public class AppInfoAdapter extends BaseAdapter {
 	private Context mContext;
 	private List mListAppInfo;
 	private PackageManager mPackManager;
+	private Core core = new Core();
 
 	public AppInfoAdapter(Context c, List list, PackageManager pm) {
 		mContext = c;
@@ -65,6 +68,12 @@ public class AppInfoAdapter extends BaseAdapter {
 			tvAppName.setText(entry.loadLabel(mPackManager) + " " + info.versionName);
 		} catch (NameNotFoundException e) {
 			tvAppName.setText(entry.loadLabel(mPackManager));
+		}
+
+		if (core.isSystemApp(entry.sourceDir)) {
+			tvAppName.setTextColor(Color.RED);
+		} else {
+			tvAppName.setTextColor(Color.WHITE);
 		}
 
 		// return view

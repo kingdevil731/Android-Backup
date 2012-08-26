@@ -1,13 +1,20 @@
 package com.Akkad.AndroidBackup;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StatFs;
 import android.util.Log;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.stericson.RootTools.RootTools;
 
@@ -17,13 +24,15 @@ public class InformationActivity extends Activity {
 	private static boolean rooted;
 	private boolean busybox;
 	final Context context = this;
+	private TextView systemStorageView, dataStorageView, externalStorageView;
+	private ProgressBar systemStorageBar, dataStorageBar, externalStorageBar;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.information_layout);
 		TextView lblroot = (TextView) findViewById(R.id.rootView);
-		if (RootTools.isRootAvailable()) {
-			rooted = RootTools.isAccessGiven();
+		if (RootTools.isRootAvailable() && RootTools.isAccessGiven()) {
+			rooted = true;
 			lblroot.setText(getResources().getString(R.string.information_tab_RootAccess) + " " + getResources().getString(R.string.yes));
 		} else {
 			rooted = false;
@@ -51,6 +60,22 @@ public class InformationActivity extends Activity {
 			lblBusybox.setText(getResources().getString(R.string.information_tab_BusyBox) + " " + getResources().getString(R.string.no));
 			busybox = false;
 		}
+
+		systemStorageView = (TextView) findViewById(R.id.systemStorageView);
+		systemStorageBar = (ProgressBar) findViewById(R.id.systemStorageProgressBar);
+
+		dataStorageView = (TextView) findViewById(R.id.dataStorageView);
+		dataStorageBar = (ProgressBar) findViewById(R.id.dataStorageProgressBar);
+
+		externalStorageView = (TextView) findViewById(R.id.ExternalStorageView);
+		externalStorageBar = (ProgressBar) findViewById(R.id.ExternalStorageProgressBar);
+		updateStorageInformation();
+	}
+
+	@Override
+	protected void onResume() {
+		updateStorageInformation();
+		super.onResume();
 	}
 
 	private void offerBusyBox() {
@@ -62,5 +87,81 @@ public class InformationActivity extends Activity {
 	 */
 	public static boolean isRooted() {
 		return rooted;
+	}
+
+	public static boolean hasExternalStorage() {
+		return getExternalStorageSize() > 0;
+	}
+
+	public static long getDataSize() {
+		long availableSpace = -1L;
+		StatFs stat = new StatFs(Environment.getDataDirectory().getPath());
+		availableSpace = (long) stat.getBlockCount() * (long) stat.getBlockSize();
+		return availableSpace;
+	}
+
+	public static long getDataFreeSpace() {
+		long availableSpace = -1L;
+		StatFs stat = new StatFs(Environment.getDataDirectory().getPath());
+		availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
+		return availableSpace;
+	}
+
+	public static long getSystemFreeSpace() {
+		long freeSpace = -1L;
+		StatFs stat = new StatFs(Environment.getRootDirectory().getPath());
+		freeSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
+		return freeSpace;
+	}
+
+	public static long getSystemSize() {
+		long availableSpace = -1L;
+		StatFs stat = new StatFs(Environment.getRootDirectory().getPath());
+		availableSpace = (long) stat.getBlockCount() * (long) stat.getBlockSize();
+		return availableSpace;
+	}
+
+	public static long getInternalStorageSize() {
+		long availableSpace = -1L;
+		StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+		availableSpace = (long) stat.getBlockCount() * (long) stat.getBlockSize();
+		return availableSpace;
+	}
+
+	public static long getInternalStorageFreeSpace() {
+		long availableSpace = -1L;
+		StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+		availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
+		return availableSpace;
+	}
+
+	public static long getExternalStorageSize() {
+		long availableSpace = -1L;
+		StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+		availableSpace = (long) stat.getBlockCount() * (long) stat.getBlockSize();
+		return availableSpace;
+	}
+
+	public static long getExternalStorageFreeSpace() {
+		long availableSpace = -1L;
+		StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+		availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
+		return availableSpace;
+	}
+
+	public void updateStorageInformation() {
+		systemStorageView.setText(getSystemSize() / (1024 * 1024) + "MB (" + getSystemFreeSpace() / (1024 * 1024) + "MB free)");
+		systemStorageBar.setProgress((int) Math.round(((double) (getSystemSize() - getSystemFreeSpace()) / (double) getSystemSize() * 100)));
+
+		dataStorageView.setText(getDataSize() / (1024 * 1024) + "MB (" + getDataFreeSpace() / (1024 * 1024) + "MB free)");
+		dataStorageBar.setProgress((int) Math.round(((double) (getDataSize() - getDataFreeSpace()) / (double) getDataSize() * 100)));
+		if (hasExternalStorage()) {
+			externalStorageView.setText(getExternalStorageSize() / (1024 * 1024) + "MB (" + getExternalStorageFreeSpace() / (1024 * 1024) + "MB free)");
+			externalStorageBar.setProgress((int) Math.round(((double) (getExternalStorageSize() - getExternalStorageFreeSpace()) / (double) getExternalStorageSize() * 100)));
+		} else {
+			findViewById(R.id.ExternalStorageLabel).setEnabled(false);
+			findViewById(R.id.ExternalStorageView).setEnabled(false);
+			findViewById(R.id.ExternalStorageProgressBar).setEnabled(false);
+		}
 	}
 }

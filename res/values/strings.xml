@@ -15,7 +15,7 @@
     <string name="applications_popup_backup">Backup</string>
     <string name="applications_popup_wipe_data">Wipe Data</string>
     <string name="uninstall_system_app_warning_dialog_title">Warning</string>
-    <string name="uninstall_system_app_warning_dialog_text"> is a System package that may be needed for the phone to work properly. Removing this package may break your phone, Would you like to uninstall it (At your own risk).</string>
+    <string name="uninstall_system_app_warning_dialog_text"> is a System package that may be needed for the phone to work properly.\n\nRemoving this package may break your phone!\n\nWould you like to uninstall it (At your own risk).</string>
     <string name="toast_notification_apprun_notfound">Application Not Found</string>
     <string name="toast_notification_appdata_deleted">Data Deleted!</string>
     <string name="toast_notification_app_uninstalled_root">Application Uninstalled</string>
@@ -23,7 +23,12 @@
     <string name="information_tab_BusyBox">BusyBox:</string>
     <string name="information_tab_offerBusyBox">A BusyBox installation has not been found. Would you like to download it from the Google Play Store?</string>
     <string name="information_tab_message_BusyBox_Not_Found">BusyBox Not Found</string>
+    <string name="information_tab_systemStorage">System:</string>
+    <string name="information_tab_dataStorage">Data:</string>
+    <string name="information_tab_internalStorage">Internal:</string>
     <string name="wipe_dalvik_cache_warning_dialog_title">Warning</string>
-    <string name="wipe_dalvik_cache_warning_dialog_text">This will clear the Dalvik Cache of your device. The device will be rebooted after this process. It\'s normal for the device to take a long time to boot after this operation. Do you want to proceed?</string>
+    <string name="wipe_dalvik_cache_warning_dialog_text">This will clear the Dalvik Cache of your device.\n\nThe device will be rebooted after this process.\n\nIt\'s normal for the device to take a long time to boot after this operation.\n\nDo you want to proceed?</string>
+    <string name="force_close_app">Force Close App</string>
+    <string name="open_system_app_info">Open System App Info</string>
 
 </resources>

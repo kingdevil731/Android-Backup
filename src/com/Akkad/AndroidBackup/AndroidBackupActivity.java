@@ -43,11 +43,22 @@ public class AndroidBackupActivity extends TabActivity {
 		Intent scheduleIntent = new Intent(this, ScheduleActivity.class);
 		scheduleSpec.setContent(scheduleIntent);
 
-		// Add all TabSpec to TabHost
-		tabHost.addTab(informationSpec); // Add Information tab
-		tabHost.addTab(tasksSpec); // Add Tasks tab
-		tabHost.addTab(applicationSpec); // Add Applications tab
-		tabHost.addTab(scheduleSpec); // Add Schedule tab
+		if (RootTools.isRootAvailable() && RootTools.isAccessGiven() && RootTools.isBusyboxAvailable()) {
+			// Add all TabSpec to TabHost
+			tabHost.addTab(informationSpec); // Add Information tab
+			tabHost.addTab(tasksSpec); // Add Tasks tab
+			tabHost.addTab(applicationSpec); // Add Applications tab
+			tabHost.addTab(scheduleSpec); // Add Schedule tab
+		} else {
+			tabHost.setClickable(false);
+			tabHost.addTab(informationSpec); // Add Information tab
+		}
+	}
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
 	}
 
 	/**

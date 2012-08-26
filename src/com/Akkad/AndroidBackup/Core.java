@@ -1,25 +1,170 @@
 package com.Akkad.AndroidBackup;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningAppProcessInfo;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.stericson.RootTools.CommandCapture;
 import com.stericson.RootTools.RootTools;
 import com.stericson.RootTools.RootToolsException;
 
 /**
+ * Class that provides the core functionality of Android Backup
+ * 
  * @author Raafat Akkad (raafat DOT akkad AT gmail.com
  */
 public class Core extends Activity {
 	private static final String TAG = "Android Backup Core";
+	private String backupFolderLocation = "/sdcard/AndroidBackup/"; // Hardcoded until a backup folder setting is implemented
 
-	public boolean backupApplication() {
+	public boolean isNamedProcessRunning(String processName) {
+		if (processName == null) {
+			return false;
+		}
+		ActivityManager manager = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
+		List<RunningAppProcessInfo> processes = manager.getRunningAppProcesses();
 
-		return true;
+		for (RunningAppProcessInfo process : processes) {
+			if (processName.equals(process.processName)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
+	/**
+	 * Backs up the package names data into a tar.gz and returns its msd5 sum
+	 * 
+	 * @param packageName
+	 *            the packageName data to be backed up
+	 * @param formattedDate
+	 *            the date the data was backed up
+	 * @return the md5 sum of the backed up data
+	 */
+	public String backupApplicationData(String packageName, String formattedDate) {
+		CommandCapture command = new CommandCapture(0, "su", "tar -zcvf " + backupFolderLocation + packageName + "-" + formattedDate + ".tar.gz" + " /data/data/" + packageName);
+		try {
+			RootTools.getShell(true).add(command).waitForFinish();
+		} catch (InterruptedException e) {
+			return null;
+		} catch (IOException e) {
+			return null;
+		}
+		return generateMD5Sum(backupFolderLocation + packageName + "-" + formattedDate + ".tar.gz");
+
+	}
+
+	private String output;
+
+	/**
+	 * 
+	 * @param file
+	 * @return
+	 */
+	private String generateMD5Sum(String file) {
+		CommandCapture command = new CommandCapture(0, "su", "md5 " + file) {
+			public void output(int id, String line) {
+				output = line;
+			}
+		};
+		try {
+			RootTools.getShell(true).add(command).waitForFinish();
+		} catch (InterruptedException e) {
+			return null;
+		} catch (IOException e) {
+			return null;
+		}
+		String[] tokens = output.split(" ");
+		return tokens[0];
+	}
+
+	public String backupApplicationApk(String appName, String packageName, String apkLocation, String formattedDate) {
+		CommandCapture command = new CommandCapture(0, "su", "cp " + apkLocation + " " + backupFolderLocation + packageName + "-" + formattedDate + ".apk");
+
+		try {
+			RootTools.getShell(true).add(command).waitForFinish();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		/* Check if the MD5 of the installed apk is the same as the backed up apk */
+		String installedApkMD5 = generateMD5Sum(apkLocation);
+		String backedUpApkMD5 = generateMD5Sum(backupFolderLocation + packageName + "-" + formattedDate + ".apk");
+
+		if (installedApkMD5.equals(backedUpApkMD5)) {
+			return installedApkMD5;
+		} else {
+			Toast.makeText(this, "MD5 do not match", Toast.LENGTH_LONG).show();
+			return null;
+		}
+
+	}
+
+	/**
+	 * Backups the application apk, data and creates an information text file which stores information about the file
+	 * 
+	 * @param packageName
+	 * @param apkLocation
+	 * @return
+	 */
+	public boolean backupApplication(ApplicationInfo selectedApp, PackageManager pm) {
+		Calendar calendar = Calendar.getInstance();
+
+		SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-HHmmss");
+		String formattedDate = df.format(calendar.getTime()); // Date is saved so it is the same for the backed up apk, data and app information
+
+		String backedUpApkMD5 = backupApplicationApk("" + selectedApp.loadLabel(pm), selectedApp.packageName, selectedApp.sourceDir, formattedDate);
+		String backedUpDataMD5 = backupApplicationData(selectedApp.packageName, formattedDate);
+
+		if (backedUpApkMD5 != null && backedUpDataMD5 != null) {
+
+			File backupInformationFile = new File(backupFolderLocation + selectedApp.packageName + "-" + formattedDate + ".information");
+			try {
+				backupInformationFile.createNewFile();
+			} catch (IOException e) {
+				Log.e("Raafat", "The Information File could not be created");
+				return false;
+			}
+
+			FileWriter fileWriter;
+			try {
+				fileWriter = new FileWriter(backupInformationFile);
+				BufferedWriter out = new BufferedWriter(fileWriter);
+
+				out.write("# Android Backup\n");
+				out.write("#" + calendar.getTime().toGMTString() + '\n');
+				out.write("app_label=" + selectedApp.loadLabel(pm) + '\n');
+				out.write("app_package_name=" + selectedApp.packageName + '\n');
+				out.write("app_target_sdk_version=" + selectedApp.targetSdkVersion + '\n');
+				out.write("app_apk_md5=" + backedUpApkMD5 + '\n');
+				out.write("app_data_md5=" + backedUpDataMD5 + '\n');
+				out.write("app_is_system=" + isSystemApp(selectedApp.sourceDir) + '\n');
+				out.flush(); // Flushes the writer
+				out.close(); // Close the file
+			} catch (IOException e) {
+				Log.e(TAG, "Could not write information file");
+				return false;
+			}
+
+		}
+		return false;
 	}
 
 	/**
@@ -40,12 +185,6 @@ public class Core extends Activity {
 			return false;
 		}
 		return true;
-
-		/*
-		 * try { RootTools.sendShell("pm disable" + packageName, timeout); } catch (Exception e) { Log.d(TAG, "Error: " + packageName + "has not been disabled by pm" + ", exiting..."); return; } Log.d(TAG, packageName + "has been disabled by pm"); try { RootTools.sendShell("cd /data/data/" +
-		 * packageName, timeout); RootTools.sendShell("rm *", timeout); } catch (Exception e) { Log.d(TAG, "Error: " + packageName + "data has not been deleted" + ", exiting..."); return; } Log.d(TAG, packageName + "data has been deleted"); try { RootTools.sendShell("pm enable" + packageName,
-		 * timeout); } catch (Exception e) { Log.d(TAG, packageName + "has not been re-enabled by pm" + ", exiting..."); return; } Log.d(TAG, packageName + "has been re-enabled by pm"); Log.d(TAG, packageName + "has not been re-enabled by pm");
-		 */
 	}
 
 	/**
@@ -64,53 +203,47 @@ public class Core extends Activity {
 	}
 
 	/**
-	 * Uninstalls an application using root permissions to prevent an uninstall prompt and to remove system applicationsF
+	 * Uninstalls an application using root permissions to prevent an uninstall prompt and to remove system applications
+	 * 
+	 * TODO clean Dalvik Cache for uninstalled application
 	 * 
 	 * @param packageName
 	 * @param apkLocation
 	 */
-	public void UninstallAppRoot(String packageName, String apkLocation) {
+	public boolean UninstallAppRoot(String packageName, String apkLocation) {
 		if (killApp(packageName)) {
 
 			wipeAppData(packageName);
 
 			if (isSystemApp(apkLocation)) // A System App
 			{
-				mountSystemasRW(); // Mounts System/ as read/write
+				if (!mountSystemasRW()) { // Mounts System/ as read/write
+					Log.d(TAG, "Couldn't mount /System as RW");
+					return false;
+				}
 			}
 
-			CommandCapture command = new CommandCapture(0, "rm " + apkLocation, "pm uninstall " + packageName);
+			CommandCapture command = new CommandCapture(0, "pm disable " + packageName, "rm " + apkLocation, "pm uninstall " + packageName);
 
 			try {
 				RootTools.getShell(true).add(command).waitForFinish();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				return false;
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				return false;
 			}
 
-			if (isSystemApp(apkLocation))// A System App
+			if (isSystemApp(apkLocation)) // A System App
 			{
 				try {
-					mountSystemasRO(); // remounts System/ as read only
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (RootToolsException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (TimeoutException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					mountSystemasRO(); // remounts /System as read only
+				} catch (Exception e) {
+					return false;
 				}
 			}
 
-			// TODO update app list
-
 		}
-
+		return true;
 	}
 
 	/**
@@ -133,18 +266,15 @@ public class Core extends Activity {
 	/**
 	 * Mounts the System partition as Read/Write
 	 */
-	private void mountSystemasRW() {
-		RootTools.remount("/system", "rw");
-		Log.d(TAG, "/System mounted as read only");
+	private boolean mountSystemasRW() {
+		return RootTools.remount("/system", "rw");
 	}
 
 	/**
 	 * Mounts the System partition as Read-Only
-	 * 
 	 */
-	private void mountSystemasRO() throws IOException, RootToolsException, TimeoutException {
-		RootTools.remount("/system", "ro");
-		Log.d(TAG, "/System mounted as read only");
+	private boolean mountSystemasRO() throws IOException, RootToolsException, TimeoutException {
+		return RootTools.remount("/system", "ro");
 	}
 
 	/**
@@ -167,5 +297,4 @@ public class Core extends Activity {
 			return;
 		}
 	}
-
 }
