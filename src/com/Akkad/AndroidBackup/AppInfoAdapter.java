@@ -1,5 +1,6 @@
 package com.Akkad.AndroidBackup;
 
+import java.io.File;
 import java.util.List;
 
 import android.content.Context;
@@ -7,7 +8,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +21,7 @@ public class AppInfoAdapter extends BaseAdapter {
 	private List mListAppInfo;
 	private PackageManager mPackManager;
 	private Core core = new Core();
+	private String backupFolderLocation = "/sdcard/AndroidBackup/"; // Hardcoded until a backup folder setting is implemented
 
 	public AppInfoAdapter(Context c, List list, PackageManager pm) {
 		mContext = c;
@@ -60,7 +61,7 @@ public class AppInfoAdapter extends BaseAdapter {
 		// load controls from layout resources
 		ImageView ivAppIcon = (ImageView) v.findViewById(R.id.app_icon);
 		TextView tvAppName = (TextView) v.findViewById(R.id.app_name);
-
+		TextView tvbackupAvailable = (TextView) v.findViewById(R.id.tvbackupAvailable);
 		// set data to display
 		ivAppIcon.setImageDrawable(entry.loadIcon(mPackManager));
 		try {
@@ -74,6 +75,18 @@ public class AppInfoAdapter extends BaseAdapter {
 			tvAppName.setTextColor(Color.RED);
 		} else {
 			tvAppName.setTextColor(Color.WHITE);
+		}
+
+		File mfile = new File(backupFolderLocation);
+		File[] list = mfile.listFiles();
+
+		tvbackupAvailable.setText("Backup Not Available"); // TODO get string from R.String
+
+		for (int i = 0; i < list.length; i++) {
+			if (list[i].getName().startsWith(entry.packageName)) {
+				tvbackupAvailable.setText("Backup Available");// TODO get string from R.String
+				break;
+			}
 		}
 
 		// return view

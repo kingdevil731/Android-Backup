@@ -139,6 +139,7 @@ public class ApplicationsActivity extends Activity {
 
 								// core.backupApplicationApk(selectedApp.loadLabel(getPackageManager()).toString(), selectedApp.packageName, selectedApp.sourceDir);
 								core.backupApplication(selectedApp, getPackageManager());
+								refreshAppList();
 								Toast.makeText(ApplicationsActivity.this, appName + " has been backed successfully", Toast.LENGTH_LONG).show();
 							}
 						});
