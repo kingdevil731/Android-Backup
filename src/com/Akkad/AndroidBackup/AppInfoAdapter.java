@@ -72,17 +72,17 @@ public class AppInfoAdapter extends BaseAdapter {
 		}
 
 		switch (core.applicationsType(entry.sourceDir)) {
-		case 1:
-			tvAppName.setTextColor(Color.RED);
-			break;
-		case 2:
-			tvAppName.setTextColor(Color.BLUE);
-			break;
-		case 0:
-			tvAppName.setTextColor(Color.WHITE);
+		case 0: // Normal app installed in /data/app
 		default:
 			tvAppName.setTextColor(Color.WHITE);
 			break;
+		case 1: // System App installed in /system/app
+			tvAppName.setTextColor(Color.RED);
+			break;
+		case 2: // Normal App installed on the SD Card
+			tvAppName.setTextColor(Color.BLUE);
+			break;
+
 		}
 
 		File mfile = new File(backupFolderLocation);
