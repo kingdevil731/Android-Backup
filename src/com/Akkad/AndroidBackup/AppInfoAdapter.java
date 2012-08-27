@@ -82,12 +82,12 @@ public class AppInfoAdapter extends BaseAdapter {
 
 		int counter = 0;
 		for (int i = 0; i < list.length; i++) {
-			if (list[i].getName().startsWith(entry.packageName)) {
-				counter++;
+			if (list[i].getName().endsWith(".information")) {
+				if (list[i].getName().startsWith(entry.packageName)) {
+					counter++;
+				}
 			}
 		}
-
-		counter /= 3;
 
 		if (counter > 1) {
 			tvbackupAvailable.setText(counter + " " + mContext.getString(R.string.applications_list_backups_available));
