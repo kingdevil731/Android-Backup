@@ -80,13 +80,21 @@ public class AppInfoAdapter extends BaseAdapter {
 		File mfile = new File(backupFolderLocation);
 		File[] list = mfile.listFiles();
 
-		tvbackupAvailable.setText("Backup Not Available"); // TODO get string from R.String
-
+		int counter = 0;
 		for (int i = 0; i < list.length; i++) {
 			if (list[i].getName().startsWith(entry.packageName)) {
-				tvbackupAvailable.setText("Backup Available");// TODO get string from R.String
-				break;
+				counter++;
 			}
+		}
+
+		counter /= 3;
+
+		if (counter > 1) {
+			tvbackupAvailable.setText(counter + " Backups Available");// TODO get string from R.String
+		} else if (counter == 1) {
+			tvbackupAvailable.setText(counter + " Backup Available");// TODO get string from R.String
+		} else {
+			tvbackupAvailable.setText("Backup Not Available"); // TODO get string from R.String
 		}
 
 		// return view
