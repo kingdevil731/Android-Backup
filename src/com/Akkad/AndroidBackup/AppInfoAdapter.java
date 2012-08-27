@@ -21,7 +21,6 @@ public class AppInfoAdapter extends BaseAdapter {
 	private List mListAppInfo;
 	private PackageManager mPackManager;
 	private Core core = new Core();
-	private String backupFolderLocation = "/sdcard/AndroidBackup/"; // Hardcoded until a backup folder setting is implemented
 
 	public AppInfoAdapter(Context c, List list, PackageManager pm) {
 		mContext = c;
@@ -85,17 +84,7 @@ public class AppInfoAdapter extends BaseAdapter {
 
 		}
 
-		File mfile = new File(backupFolderLocation);
-		File[] list = mfile.listFiles();
-
-		int counter = 0;
-		for (int i = 0; i < list.length; i++) {
-			if (list[i].getName().endsWith(".information")) {
-				if (list[i].getName().startsWith(entry.packageName)) {
-					counter++;
-				}
-			}
-		}
+		int counter = BackupRetriever.getBackupCount(entry.packageName);
 
 		if (counter > 1) {
 			tvbackupAvailable.setText(counter + " " + mContext.getString(R.string.applications_list_backups_available));

@@ -28,7 +28,6 @@ import com.stericson.RootTools.RootToolsException;
  */
 public class Core extends Activity {
 	private static final String TAG = "Android Backup Core";
-	private String backupFolderLocation = "/sdcard/AndroidBackup/"; // Hardcoded until a backup folder setting is implemented
 
 	public boolean isNamedProcessRunning(String processName) {
 		if (processName == null) {
@@ -55,7 +54,7 @@ public class Core extends Activity {
 	 * @return the md5 sum of the backed up data
 	 */
 	public String backupApplicationData(String packageName, String formattedDate) {
-		CommandCapture command = new CommandCapture(0, "su", "tar -zcvf " + backupFolderLocation + packageName + "-" + formattedDate + ".tar.gz" + " /data/data/" + packageName);
+		CommandCapture command = new CommandCapture(0, "su", "tar -zcvf " + BackupRetriever.getBackupFolderLocation() + packageName + "-" + formattedDate + ".tar.gz" + " /data/data/" + packageName);
 		try {
 			RootTools.getShell(true).add(command).waitForFinish();
 		} catch (InterruptedException e) {
@@ -63,8 +62,7 @@ public class Core extends Activity {
 		} catch (IOException e) {
 			return null;
 		}
-		return generateMD5Sum(backupFolderLocation + packageName + "-" + formattedDate + ".tar.gz");
-
+		return generateMD5Sum(BackupRetriever.getBackupFolderLocation() + packageName + "-" + formattedDate + ".tar.gz");
 	}
 
 	private String output;
@@ -92,7 +90,7 @@ public class Core extends Activity {
 	}
 
 	public String backupApplicationApk(String appName, String packageName, String apkLocation, String formattedDate) {
-		CommandCapture command = new CommandCapture(0, "su", "cp " + apkLocation + " " + backupFolderLocation + packageName + "-" + formattedDate + ".apk");
+		CommandCapture command = new CommandCapture(0, "su", "cp " + apkLocation + " " + BackupRetriever.getBackupFolderLocation() + packageName + "-" + formattedDate + ".apk");
 
 		try {
 			RootTools.getShell(true).add(command).waitForFinish();
@@ -106,7 +104,7 @@ public class Core extends Activity {
 
 		/* Check if the MD5 of the installed apk is the same as the backed up apk */
 		String installedApkMD5 = generateMD5Sum(apkLocation);
-		String backedUpApkMD5 = generateMD5Sum(backupFolderLocation + packageName + "-" + formattedDate + ".apk");
+		String backedUpApkMD5 = generateMD5Sum(BackupRetriever.getBackupFolderLocation() + packageName + "-" + formattedDate + ".apk");
 
 		if (installedApkMD5.equals(backedUpApkMD5)) {
 			return installedApkMD5;
@@ -135,7 +133,7 @@ public class Core extends Activity {
 
 		if (backedUpApkMD5 != null && backedUpDataMD5 != null) {
 
-			File backupInformationFile = new File(backupFolderLocation + selectedApp.packageName + "-" + formattedDate + ".information");
+			File backupInformationFile = new File(BackupRetriever.getBackupFolderLocation() + selectedApp.packageName + "-" + formattedDate + ".information");
 			try {
 				backupInformationFile.createNewFile();
 			} catch (IOException e) {
