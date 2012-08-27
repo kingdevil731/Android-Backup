@@ -210,7 +210,7 @@ public class ApplicationsActivity extends Activity {
 		String appVersion;
 		try {
 			PackageInfo info = getPackageManager().getPackageInfo(app.packageName, 0);
-			appVersion = info.versionName + info.versionCode;
+			appVersion = info.versionName + " (" + info.versionCode + ")";
 		} catch (NameNotFoundException e) {
 			appVersion = context.getResources().getString(R.string.application_version_not_available);
 		}
