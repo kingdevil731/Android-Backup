@@ -95,7 +95,7 @@ public class ApplicationsActivity extends Activity {
 							public void onClick(View v) {
 								if (InformationActivity.isRooted()) {
 
-									if (core.isSystemApp(selectedApp.sourceDir)) {
+									if (core.applicationsType(selectedApp.sourceDir) == 1) { // A System App
 										final AlertDialog.Builder uninstallSystemAppWarningDialog = new AlertDialog.Builder(context);
 										uninstallSystemAppWarningDialog.setTitle(getString(R.string.uninstall_system_app_warning_dialog_title));
 										uninstallSystemAppWarningDialog.setMessage(selectedApp.loadLabel(getPackageManager()) + " " + getString(R.string.uninstall_system_app_warning_dialog_text));
@@ -141,7 +141,7 @@ public class ApplicationsActivity extends Activity {
 							dialogWipeDataButton.setEnabled(false); // disable the wipe data button
 							dialogWipeDataButton = null; // Set dialogWipeDataButton to null to allow for garbage collection
 
-							if (core.isSystemApp(selectedApp.sourceDir)) // disable uninstall button if the app is a system app and the device is not rooted
+							if (core.applicationsType(selectedApp.sourceDir) == 1) // disable uninstall button if the app is a system app and the device is not rooted
 							{
 								dialogUninstallButton.setEnabled(false); // disable the wipe data button
 							}
@@ -161,7 +161,7 @@ public class ApplicationsActivity extends Activity {
 						});
 
 						dialogRunButton.setEnabled(getPackageManager().getLaunchIntentForPackage(selectedApp.packageName) != null);
-						dialogBackupButton.setEnabled((core.isSystemApp(selectedApp.sourceDir) && InformationActivity.isRooted() || !core.isSystemApp(selectedApp.sourceDir)));
+						dialogBackupButton.setEnabled((core.applicationsType(selectedApp.sourceDir) == 1 && InformationActivity.isRooted() || core.applicationsType(selectedApp.sourceDir) != 1));
 						appPopupDialog.show();
 					}
 				});

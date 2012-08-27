@@ -155,7 +155,7 @@ public class Core extends Activity {
 				out.write("app_target_sdk_version=" + selectedApp.targetSdkVersion + '\n');
 				out.write("app_apk_md5=" + backedUpApkMD5 + '\n');
 				out.write("app_data_md5=" + backedUpDataMD5 + '\n');
-				out.write("app_is_system=" + isSystemApp(selectedApp.sourceDir) + '\n');
+				out.write("app_is_system=" + applicationsType(selectedApp.sourceDir) + '\n');
 				out.flush(); // Flushes the writer
 				out.close(); // Close the file
 			} catch (IOException e) {
@@ -215,7 +215,7 @@ public class Core extends Activity {
 
 			wipeAppData(packageName);
 
-			if (isSystemApp(apkLocation)) // A System App
+			if (applicationsType(apkLocation) == 1) // A System App
 			{
 				if (!mountSystemasRW()) { // Mounts System/ as read/write
 					Log.d(TAG, "Couldn't mount /System as RW");
@@ -233,7 +233,7 @@ public class Core extends Activity {
 				return false;
 			}
 
-			if (isSystemApp(apkLocation)) // A System App
+			if (applicationsType(apkLocation) == 1) // A System App
 			{
 				try {
 					mountSystemasRO(); // remounts /System as read only
@@ -282,8 +282,14 @@ public class Core extends Activity {
 	 *            the location of the App
 	 * @return if the App is a System App
 	 */
-	public boolean isSystemApp(String apkLocation) {
-		return apkLocation.toLowerCase().contains("/system/app");
+	public short applicationsType(String apkLocation) {
+		if (apkLocation.toLowerCase().contains("/data/app")) {
+			return 0; // Normal App
+		} else if (apkLocation.toLowerCase().contains("/system/app")) {
+			return 1; // System App
+		} else {
+			return 2; // Normal App on SD Card
+		}
 	}
 
 	/**

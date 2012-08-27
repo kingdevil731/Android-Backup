@@ -71,10 +71,18 @@ public class AppInfoAdapter extends BaseAdapter {
 			tvAppName.setText(entry.loadLabel(mPackManager));
 		}
 
-		if (core.isSystemApp(entry.sourceDir)) {
+		switch (core.applicationsType(entry.sourceDir)) {
+		case 1:
 			tvAppName.setTextColor(Color.RED);
-		} else {
+			break;
+		case 2:
+			tvAppName.setTextColor(Color.BLUE);
+			break;
+		case 0:
 			tvAppName.setTextColor(Color.WHITE);
+		default:
+			tvAppName.setTextColor(Color.WHITE);
+			break;
 		}
 
 		File mfile = new File(backupFolderLocation);
@@ -100,5 +108,4 @@ public class AppInfoAdapter extends BaseAdapter {
 		// return view
 		return v;
 	}
-
 }
