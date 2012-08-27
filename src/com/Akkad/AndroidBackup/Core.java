@@ -155,7 +155,8 @@ public class Core extends Activity {
 				out.write("app_target_sdk_version=" + selectedApp.targetSdkVersion + '\n');
 				out.write("app_apk_md5=" + backedUpApkMD5 + '\n');
 				out.write("app_data_md5=" + backedUpDataMD5 + '\n');
-				out.write("app_is_system=" + applicationsType(selectedApp.sourceDir) + '\n');
+				out.write("# 0=Normal App installed to /data/app/ , 1=System App installed to /system/app/ , 2=Normal App installed to the SD Card\n");
+				out.write("app_install_location=" + applicationsType(selectedApp.sourceDir));
 				out.flush(); // Flushes the writer
 				out.close(); // Close the file
 			} catch (IOException e) {
