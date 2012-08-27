@@ -14,8 +14,8 @@
         android:id="@+id/applicationsDialogButtonRun"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
         android:layout_below="@+id/applicationsDialogButtonBackup"
+        android:layout_gravity="center"
         android:text="@string/applications_popup_run" />
 
     <Button
@@ -25,6 +25,13 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:text="@string/applications_popup_uninstall" />
+
+    <TextView
+        android:id="@+id/applicationsDialogCurrentAppInfo"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/applicationsDialogButtonWipeData"
+        android:layout_toRightOf="@+id/applicationsDialogButtonRun" />
 
     <Button
         android:id="@+id/applicationsDialogButtonWipeData"

@@ -9,6 +9,7 @@ import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -23,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class ApplicationsActivity extends Activity {
@@ -31,6 +33,7 @@ public class ApplicationsActivity extends Activity {
 	private final Context context = this;
 	private ApplicationInfo selectedApp;
 	private Core core = new Core();
+	private Dialog appPopupDialog;
 
 	/**
 	 * Refreshes the application list
@@ -54,27 +57,40 @@ public class ApplicationsActivity extends Activity {
 						selectedApp = (ApplicationInfo) appInfoAdapter.getItem(pos);
 
 						// custom dialog
-						final Dialog dialog = new Dialog(context);
-						dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
+						appPopupDialog = new Dialog(context);
+						appPopupDialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
+
+						appPopupDialog.setContentView(R.layout.applications_popup);
+						appPopupDialog.setFeatureDrawable(Window.FEATURE_LEFT_ICON, selectedApp.loadIcon(getPackageManager()));
+						appPopupDialog.setCanceledOnTouchOutside(true);
+
+						final TextView currentAppInfo = (TextView) appPopupDialog.findViewById(R.id.applicationsDialogCurrentAppInfo);
+
 						try {
 							PackageInfo info = getPackageManager().getPackageInfo(selectedApp.packageName, 0);
-							dialog.setTitle(selectedApp.loadLabel(getPackageManager()) + " " + info.versionName);
+							String appAndVersion = selectedApp.loadLabel(getPackageManager()) + " " + info.versionName;
+							appPopupDialog.setTitle(appAndVersion);
+							currentAppInfo.setText(appAndVersion + info.versionCode);
 						} catch (NameNotFoundException e) {
-							dialog.setTitle(selectedApp.loadLabel(getPackageManager()));
+							appPopupDialog.setTitle(selectedApp.loadLabel(getPackageManager()));
 						}
-						dialog.setContentView(R.layout.applications_popup);
-						dialog.setFeatureDrawable(Window.FEATURE_LEFT_ICON, selectedApp.loadIcon(getPackageManager()));
-						dialog.setCanceledOnTouchOutside(true);
 
-						final Button dialogRunButton = (Button) dialog.findViewById(R.id.applicationsDialogButtonRun);
-						dialogRunButton.setOnClickListener(new OnClickListener() {
+						currentAppInfo.setOnClickListener(new OnClickListener() {
+							@Override
 							public void onClick(View v) {
-								launchApp(parent.getContext(), getPackageManager(), selectedApp.packageName); // launches the selected application
-								dialog.dismiss(); // closes the dialog
+								createCurrentApplicationInformationDialog(selectedApp);
 							}
 						});
 
-						final Button dialogUninstallButton = (Button) dialog.findViewById(R.id.applicationsDialogButtonUninstall);
+						final Button dialogRunButton = (Button) appPopupDialog.findViewById(R.id.applicationsDialogButtonRun);
+						dialogRunButton.setOnClickListener(new OnClickListener() {
+							public void onClick(View v) {
+								launchApp(parent.getContext(), getPackageManager(), selectedApp.packageName); // launches the selected application
+								appPopupDialog.dismiss(); // closes the dialog
+							}
+						});
+
+						final Button dialogUninstallButton = (Button) appPopupDialog.findViewById(R.id.applicationsDialogButtonUninstall);
 						dialogUninstallButton.setOnClickListener(new OnClickListener() {
 							public void onClick(View v) {
 								if (InformationActivity.isRooted()) {
@@ -97,7 +113,7 @@ public class ApplicationsActivity extends Activity {
 									} else {
 										core.UninstallAppRoot(selectedApp.packageName, selectedApp.sourceDir);
 										refreshAppList();
-										dialog.dismiss();
+										appPopupDialog.dismiss();
 									}
 								} else {
 									Uri packageURI = Uri.parse("package:" + selectedApp.packageName);
@@ -108,7 +124,7 @@ public class ApplicationsActivity extends Activity {
 							}
 						});
 
-						Button dialogWipeDataButton = (Button) dialog.findViewById(R.id.applicationsDialogButtonWipeData);
+						Button dialogWipeDataButton = (Button) appPopupDialog.findViewById(R.id.applicationsDialogButtonWipeData);
 						// TODO this check is not needed
 						if (InformationActivity.isRooted()) {
 							dialogWipeDataButton.setOnClickListener(new OnClickListener() {
@@ -131,7 +147,7 @@ public class ApplicationsActivity extends Activity {
 							}
 						}
 
-						Button dialogBackupButton = (Button) dialog.findViewById(R.id.applicationsDialogButtonBackup);
+						Button dialogBackupButton = (Button) appPopupDialog.findViewById(R.id.applicationsDialogButtonBackup);
 						dialogBackupButton.setOnClickListener(new OnClickListener() {
 							@Override
 							public void onClick(View v) {
@@ -146,7 +162,7 @@ public class ApplicationsActivity extends Activity {
 
 						dialogRunButton.setEnabled(getPackageManager().getLaunchIntentForPackage(selectedApp.packageName) != null);
 						dialogBackupButton.setEnabled((core.isSystemApp(selectedApp.sourceDir) && InformationActivity.isRooted() || !core.isSystemApp(selectedApp.sourceDir)));
-						dialog.show();
+						appPopupDialog.show();
 					}
 				});
 	}
@@ -188,6 +204,47 @@ public class ApplicationsActivity extends Activity {
 		}
 		Collections.sort(apps, new ApplicationInfo.DisplayNameComparator(packageManager));
 		return apps;
+	}
+
+	public void createCurrentApplicationInformationDialog(ApplicationInfo app) {
+		String appVersion;
+		try {
+			PackageInfo info = getPackageManager().getPackageInfo(app.packageName, 0);
+			appVersion = info.versionName + info.versionCode;
+		} catch (NameNotFoundException e) {
+			appVersion = context.getResources().getString(R.string.application_version_not_available);
+		}
+
+		createApplicationInformationDialog("" + app.loadLabel(getPackageManager()), app.packageName, app.sourceDir, appVersion);
+	}
+
+	public void createApplicationInformationDialog(String appName, String packageName, String apkPath, String appVersion) {
+		appPopupDialog.hide();
+		final Dialog applicationInformationDialog = new Dialog(context);
+		applicationInformationDialog.setTitle(getString(R.string.applications_information_current_version_info_title));
+		applicationInformationDialog.setContentView(R.layout.application_info_dialog);
+
+		TextView tvAppName = (TextView) applicationInformationDialog.findViewById(R.id.appNameValue);
+		tvAppName.setText("Hello");
+
+		TextView tvPackageName = (TextView) applicationInformationDialog.findViewById(R.id.packageNameValue);
+		tvPackageName.setText(packageName);
+
+		TextView tvApkPath = (TextView) applicationInformationDialog.findViewById(R.id.appApkPathValue);
+		tvApkPath.setText(apkPath);
+
+		TextView tvappVersion = (TextView) applicationInformationDialog.findViewById(R.id.appVersionValue);
+		tvappVersion.setText(appVersion);
+
+		applicationInformationDialog.setCanceledOnTouchOutside(true);
+		applicationInformationDialog.show();
+
+		applicationInformationDialog.setOnDismissListener(new OnDismissListener() {
+			@Override
+			public void onDismiss(DialogInterface dialog) {
+				appPopupDialog.show();
+			}
+		});
 	}
 
 	/**
