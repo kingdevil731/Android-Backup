@@ -90,11 +90,11 @@ public class AppInfoAdapter extends BaseAdapter {
 		counter /= 3;
 
 		if (counter > 1) {
-			tvbackupAvailable.setText(counter + " Backups Available");// TODO get string from R.String
+			tvbackupAvailable.setText(counter + " " + mContext.getString(R.string.applications_list_backups_available));
 		} else if (counter == 1) {
-			tvbackupAvailable.setText(counter + " Backup Available");// TODO get string from R.String
+			tvbackupAvailable.setText(counter + " " + mContext.getString(R.string.applications_list_backup_available));
 		} else {
-			tvbackupAvailable.setText("Backup Not Available"); // TODO get string from R.String
+			tvbackupAvailable.setText(mContext.getString(R.string.applications_list_backup_not_available));
 		}
 
 		// return view

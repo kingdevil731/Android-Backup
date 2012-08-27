@@ -10,6 +10,7 @@
     <string name="help_mainmenu_item">Help</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="applications_list_backups_available">Backups Available</string>
     <string name="applications_list_backup_available">Backup Available</string>
     <string name="applications_list_backup_not_available">No Backup</string>
     <string name="applications_popup_run">Run</string>
