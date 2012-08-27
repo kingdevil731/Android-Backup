@@ -225,7 +225,7 @@ public class ApplicationsActivity extends Activity {
 		applicationInformationDialog.setContentView(R.layout.application_info_dialog);
 
 		TextView tvAppName = (TextView) applicationInformationDialog.findViewById(R.id.appNameValue);
-		tvAppName.setText("Hello");
+		tvAppName.setText(appName);
 
 		TextView tvPackageName = (TextView) applicationInformationDialog.findViewById(R.id.packageNameValue);
 		tvPackageName.setText(packageName);
