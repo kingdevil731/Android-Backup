@@ -70,7 +70,7 @@ public class ApplicationsActivity extends Activity {
 							PackageInfo info = getPackageManager().getPackageInfo(selectedApp.packageName, 0);
 							String appAndVersion = selectedApp.loadLabel(getPackageManager()) + " " + info.versionName;
 							appPopupDialog.setTitle(appAndVersion);
-							currentAppInfo.setText(appAndVersion + info.versionCode);
+							currentAppInfo.setText(appAndVersion + " (" + info.versionCode + ")");
 						} catch (NameNotFoundException e) {
 							appPopupDialog.setTitle(selectedApp.loadLabel(getPackageManager()));
 						}
