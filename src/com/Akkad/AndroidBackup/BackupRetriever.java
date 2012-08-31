@@ -19,7 +19,7 @@ public class BackupRetriever {
 		File[] backups = getBackups();
 		int backupCount = 0;
 		for (int i = 0; i < backups.length; i++) {
-			if (backups[i].getName().toLowerCase().contains(packageName)) {
+			if (backups[i].getName().toLowerCase().contains(packageName.toLowerCase())) {
 				backupCount++;
 			}
 		}
