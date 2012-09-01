@@ -18,6 +18,8 @@
     <string name="applications_popup_uninstall">Uninstall</string>
     <string name="applications_popup_backup">Backup</string>
     <string name="applications_popup_wipe_data">Wipe Data</string>
+    <string name="applications_popup_restore">Restore</string>
+    <string name="applications_popup_delete_backup">Delete</string>
     <string name="applications_information_current_version_info_title">Current Version Info</string>
     <string name="applications_information_app_name">App Name:</string>
     <string name="applications_information_package_name">Package Name:</string>

@@ -38,4 +38,26 @@ public class BackupStore {
 		});
 	}
 
+	public static Backup[] getBackupInformation() {
+		File loadBackupInformation[] = getBackups();
+		Backup backups[] = new Backup[loadBackupInformation.length];
+		for (int i = 0; i < backups.length; i++) {
+			Backup temp = new Backup();
+			temp.loadBackupInformation(loadBackupInformation[i].getPath());
+			backups[i] = temp;
+		}
+		return backups;
+	}
+
+	public static Backup[] getPackageBackupInformation(String packageName) {
+		Backup[] backupList = getBackupInformation();
+		Backup[] filteredList = new Backup[getBackupCount(packageName)];
+		int filteredCounter = 0;
+		for (int i = 0; i < backupList.length; i++) {
+			if (backupList[i].getApp_package_name().equals(packageName)) {
+				filteredList[filteredCounter++] = backupList[i];
+			}
+		}
+		return filteredList;
+	}
 }

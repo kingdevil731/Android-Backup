@@ -33,15 +33,15 @@ public class ApplicationsActivity extends Activity {
 	private final Context context = this;
 	private ApplicationInfo selectedApp;
 	private Core core = new Core();
-	private Dialog appPopupDialog;
+	private static Dialog appPopupDialog;
 
 	/**
 	 * Refreshes the application list
 	 */
 	private void refreshAppList() {
 		mListAppInfo = (ListView) findViewById(R.id.lvApps); // load list application
-		AppInfoAdapter adapter = new AppInfoAdapter(this, getInstalledApplication(this), getPackageManager()); // create new adapter
-		mListAppInfo.setAdapter(adapter); // set adapter to list view
+		AppInfoAdapter appInfoAdapter = new AppInfoAdapter(this, getInstalledApplication(this), getPackageManager()); // create new adapter
+		mListAppInfo.setAdapter(appInfoAdapter); // set adapter to list view
 	}
 
 	/** Called when the activity is first created. */
@@ -74,6 +74,8 @@ public class ApplicationsActivity extends Activity {
 						} catch (NameNotFoundException e) {
 							appPopupDialog.setTitle(selectedApp.loadLabel(getPackageManager()));
 						}
+
+						displayBackupOnAppPopup(selectedApp.packageName);
 
 						currentAppInfo.setOnClickListener(new OnClickListener() {
 							@Override
@@ -156,12 +158,14 @@ public class ApplicationsActivity extends Activity {
 								// core.backupApplicationApk(selectedApp.loadLabel(getPackageManager()).toString(), selectedApp.packageName, selectedApp.sourceDir);
 								core.backupApplication(selectedApp, getPackageManager());
 								refreshAppList();
+								displayBackupOnAppPopup(selectedApp.packageName);
 								Toast.makeText(ApplicationsActivity.this, appName + " has been backed successfully", Toast.LENGTH_LONG).show();
 							}
 						});
 
 						dialogRunButton.setEnabled(getPackageManager().getLaunchIntentForPackage(selectedApp.packageName) != null);
 						dialogBackupButton.setEnabled((core.applicationsType(selectedApp.sourceDir) == 1 && InformationActivity.isRooted() || core.applicationsType(selectedApp.sourceDir) != 1));
+
 						appPopupDialog.show();
 					}
 				});
@@ -277,5 +281,13 @@ public class ApplicationsActivity extends Activity {
 		}
 		// by default, fail to launch
 		return false;
+	}
+
+	public void displayBackupOnAppPopup(String packageName) {
+		if (BackupStore.getBackupCount(packageName) >= 1) {
+			ListView backupList = (ListView) appPopupDialog.findViewById(R.id.lvbackups);
+			BackupListAdapter backupListAdapter = new BackupListAdapter(context, BackupStore.getPackageBackupInformation(packageName)); // create new adapter
+			backupList.setAdapter(backupListAdapter); // set adapter to list view
+		}
 	}
 }
