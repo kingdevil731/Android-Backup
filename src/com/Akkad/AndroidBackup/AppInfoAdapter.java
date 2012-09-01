@@ -84,7 +84,7 @@ public class AppInfoAdapter extends BaseAdapter {
 
 		}
 
-		int counter = BackupRetriever.getBackupCount(entry.packageName);
+		int counter = BackupStore.getBackupCount(entry.packageName);
 
 		if (counter > 1) {
 			tvbackupAvailable.setText(counter + " " + mContext.getString(R.string.applications_list_backups_available));

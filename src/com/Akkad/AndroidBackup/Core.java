@@ -1,8 +1,5 @@
 package com.Akkad.AndroidBackup;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -54,7 +51,7 @@ public class Core extends Activity {
 	 * @return the md5 sum of the backed up data
 	 */
 	public String backupApplicationData(String packageName, String formattedDate) {
-		CommandCapture command = new CommandCapture(0, "su", "tar -zcvf " + BackupRetriever.getBackupFolderLocation() + packageName + "-" + formattedDate + ".tar.gz" + " /data/data/" + packageName);
+		CommandCapture command = new CommandCapture(0, "su", "tar -zcvf " + BackupStore.getBackupFolderLocation() + packageName + "-" + formattedDate + ".tar.gz" + " /data/data/" + packageName);
 		try {
 			RootTools.getShell(true).add(command).waitForFinish();
 		} catch (InterruptedException e) {
@@ -62,7 +59,7 @@ public class Core extends Activity {
 		} catch (IOException e) {
 			return null;
 		}
-		return generateMD5Sum(BackupRetriever.getBackupFolderLocation() + packageName + "-" + formattedDate + ".tar.gz");
+		return generateMD5Sum(BackupStore.getBackupFolderLocation() + packageName + "-" + formattedDate + ".tar.gz");
 	}
 
 	private String output;
@@ -90,7 +87,7 @@ public class Core extends Activity {
 	}
 
 	public String backupApplicationApk(String appName, String packageName, String apkLocation, String formattedDate) {
-		CommandCapture command = new CommandCapture(0, "su", "cp " + apkLocation + " " + BackupRetriever.getBackupFolderLocation() + packageName + "-" + formattedDate + ".apk");
+		CommandCapture command = new CommandCapture(0, "su", "cp " + apkLocation + " " + BackupStore.getBackupFolderLocation() + packageName + "-" + formattedDate + ".apk");
 
 		try {
 			RootTools.getShell(true).add(command).waitForFinish();
@@ -104,7 +101,7 @@ public class Core extends Activity {
 
 		/* Check if the MD5 of the installed apk is the same as the backed up apk */
 		String installedApkMD5 = generateMD5Sum(apkLocation);
-		String backedUpApkMD5 = generateMD5Sum(BackupRetriever.getBackupFolderLocation() + packageName + "-" + formattedDate + ".apk");
+		String backedUpApkMD5 = generateMD5Sum(BackupStore.getBackupFolderLocation() + packageName + "-" + formattedDate + ".apk");
 
 		if (installedApkMD5.equals(backedUpApkMD5)) {
 			return installedApkMD5;
@@ -125,43 +122,16 @@ public class Core extends Activity {
 	public boolean backupApplication(ApplicationInfo selectedApp, PackageManager pm) {
 		Calendar calendar = Calendar.getInstance();
 
-		SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd-HHmmss");
-		String formattedDate = df.format(calendar.getTime()); // Date is saved so it is the same for the backed up apk, data and app information
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd-HHmmss");
+		String formattedDate = formatter.format(calendar.getTime()); // Date is saved so it is the same for the backed up apk, data and app information
 
 		String backedUpApkMD5 = backupApplicationApk("" + selectedApp.loadLabel(pm), selectedApp.packageName, selectedApp.sourceDir, formattedDate);
 		String backedUpDataMD5 = backupApplicationData(selectedApp.packageName, formattedDate);
 
 		if (backedUpApkMD5 != null && backedUpDataMD5 != null) {
-
-			File backupInformationFile = new File(BackupRetriever.getBackupFolderLocation() + selectedApp.packageName + "-" + formattedDate + ".information");
-			try {
-				backupInformationFile.createNewFile();
-			} catch (IOException e) {
-				Log.e("Raafat", "The Information File could not be created");
-				return false;
-			}
-
-			FileWriter fileWriter;
-			try {
-				fileWriter = new FileWriter(backupInformationFile);
-				BufferedWriter out = new BufferedWriter(fileWriter);
-
-				out.write("# Android Backup\n");
-				out.write("#" + calendar.getTime().toGMTString() + '\n');
-				out.write("app_label=" + selectedApp.loadLabel(pm) + '\n');
-				out.write("app_package_name=" + selectedApp.packageName + '\n');
-				out.write("app_target_sdk_version=" + selectedApp.targetSdkVersion + '\n');
-				out.write("app_apk_md5=" + backedUpApkMD5 + '\n');
-				out.write("app_data_md5=" + backedUpDataMD5 + '\n');
-				out.write("# 0=Normal App installed to /data/app/ , 1=System App installed to /system/app/ , 2=Normal App installed to the SD Card\n");
-				out.write("app_install_location=" + applicationsType(selectedApp.sourceDir));
-				out.flush(); // Flushes the writer
-				out.close(); // Close the file
-			} catch (IOException e) {
-				Log.e(TAG, "Could not write information file");
-				return false;
-			}
-
+			Backup backup = new Backup(calendar, "" + selectedApp.loadLabel(pm), selectedApp.packageName, selectedApp.targetSdkVersion, backedUpApkMD5, backedUpDataMD5, applicationsType(selectedApp.sourceDir));
+			backup.saveBackupInformation();
+			return true;
 		}
 		return false;
 	}

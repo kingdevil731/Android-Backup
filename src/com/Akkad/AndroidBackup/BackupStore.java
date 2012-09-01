@@ -3,7 +3,7 @@ package com.Akkad.AndroidBackup;
 import java.io.File;
 import java.io.FilenameFilter;
 
-public class BackupRetriever {
+public class BackupStore {
 	private static String backupFolderLocation = "/sdcard/AndroidBackup/"; // Hardcoded until a backup folder setting is implemented
 	private static File mfile = new File(backupFolderLocation);
 
@@ -12,7 +12,7 @@ public class BackupRetriever {
 	}
 
 	public static void setBackupFolderLocation(String backupFolderLocation) {
-		BackupRetriever.backupFolderLocation = backupFolderLocation;
+		BackupStore.backupFolderLocation = backupFolderLocation;
 	}
 
 	public static int getBackupCount(String packageName) {
