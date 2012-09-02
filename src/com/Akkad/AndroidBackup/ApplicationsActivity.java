@@ -283,11 +283,12 @@ public class ApplicationsActivity extends Activity {
 		return false;
 	}
 
-	public void displayBackupOnAppPopup(String packageName) {
-		if (BackupStore.getBackupCount(packageName) >= 1) {
-			ListView backupList = (ListView) appPopupDialog.findViewById(R.id.lvbackups);
-			BackupListAdapter backupListAdapter = new BackupListAdapter(context, BackupStore.getPackageBackupInformation(packageName)); // create new adapter
-			backupList.setAdapter(backupListAdapter); // set adapter to list view
-		}
+	static ListView backupList;
+
+	public static void displayBackupOnAppPopup(String packageName) {
+		backupList = (ListView) appPopupDialog.findViewById(R.id.lvbackups);
+		BackupListAdapter backupListAdapter = new BackupListAdapter(appPopupDialog.getContext(), BackupStore.getPackageBackupInformation(packageName)); // create new adapter
+		backupList.setAdapter(backupListAdapter); // set adapter to list view
 	}
+
 }

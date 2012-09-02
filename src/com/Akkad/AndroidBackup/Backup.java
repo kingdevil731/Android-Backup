@@ -28,8 +28,9 @@ public class Backup {
 	private int app_target_sdk_version;
 	private Calendar backupDate;
 	private String dataLocation;
-
 	private String formattedDate;
+
+	private String informationLocation;
 
 	public Backup() {
 		this.app_target_sdk_version = -1;
@@ -138,8 +139,15 @@ public class Backup {
 		return formattedDate;
 	}
 
-	public void loadBackupInformation(String filePath) {
-		File backupInformationFile = new File(filePath);
+	/**
+	 * @return the informationLocation
+	 */
+	public String getInformationLocation() {
+		return informationLocation;
+	}
+
+	public void loadBackupInformation(String informationFilePath) {
+		File backupInformationFile = new File(informationFilePath);
 		FileInputStream fileInput;
 		try {
 			fileInput = new FileInputStream(backupInformationFile);
@@ -185,9 +193,9 @@ public class Backup {
 		this.app_apk_md5 = inputArray.get(4).split("=")[1];
 		this.app_data_md5 = inputArray.get(5).split("=")[1];
 		this.app_install_location = Integer.parseInt(inputArray.get(6).split("=")[1]);
-
-		generateAPKAndDataLocations();
+		this.informationLocation = informationFilePath;
 		generateDate();
+		generateAPKAndDataLocations();
 	}
 
 	/**
