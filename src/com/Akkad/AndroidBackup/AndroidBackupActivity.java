@@ -1,8 +1,11 @@
 package com.Akkad.AndroidBackup;
 
+import java.io.File;
+
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.widget.TabHost;
@@ -52,6 +55,13 @@ public class AndroidBackupActivity extends TabActivity {
 		} else {
 			tabHost.setClickable(false);
 			tabHost.addTab(informationSpec); // Add Information tab
+		}
+
+		// If a backup folder doesn't exist then create it
+		File backupFolder = new File(BackupStore.getBackupFolderLocation());
+		if (!backupFolder.isDirectory()) {
+			backupFolder = new File(BackupStore.getBackupFolderLocation());
+			backupFolder.mkdirs();
 		}
 	}
 
