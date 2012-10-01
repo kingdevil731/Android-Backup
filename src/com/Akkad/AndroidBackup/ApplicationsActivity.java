@@ -28,20 +28,121 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class ApplicationsActivity extends Activity {
-	private static final String TAG = "ApplicationsActivity";
-	private ListView mListAppInfo;
-	private final Context context = this;
-	private ApplicationInfo selectedApp;
-	private Core core = new Core();
 	private static Dialog appPopupDialog;
+	static ListView backupList;
+	private static final String TAG = "ApplicationsActivity";
+
+	public static void displayBackupOnAppPopup(String packageName) {
+		backupList = (ListView) appPopupDialog.findViewById(R.id.lvbackups);
+		BackupListAdapter backupListAdapter = new BackupListAdapter(appPopupDialog.getContext(), BackupStore.getPackageBackupInformation(packageName)); // create new adapter
+		backupList.setAdapter(backupListAdapter); // set adapter to list view
+	}
 
 	/**
-	 * Refreshes the application list
+	 * Get all installed application on device and return a list
+	 * 
+	 * @param c
+	 *            Context of application
+	 * 
+	 * @return list of installed applications
 	 */
-	private void refreshAppList() {
-		mListAppInfo = (ListView) findViewById(R.id.lvApps); // load list application
-		AppInfoAdapter appInfoAdapter = new AppInfoAdapter(this, getInstalledApplication(this), getPackageManager()); // create new adapter
-		mListAppInfo.setAdapter(appInfoAdapter); // set adapter to list view
+	public static List<ApplicationInfo> getInstalledApplication(Context context) {
+		PackageManager packageManager = context.getPackageManager();
+		List<ApplicationInfo> apps = packageManager.getInstalledApplications(0);
+
+		/* Loops through the app list and removes Android Backup & Android System */
+		boolean androidBackupRemoved = false, androidSystemRemoved = false;
+		for (int i = 0; i < apps.size(); i++) {
+			if (apps.get(i).loadLabel(packageManager).equals("Android Backup")) {
+				apps.remove(i);
+				androidBackupRemoved = true;
+				if (androidBackupRemoved && androidSystemRemoved) {
+					break;
+				}
+			} else if ((apps.get(i).loadLabel(packageManager).equals("Android System"))) {
+				apps.remove(i);
+				androidSystemRemoved = true;
+				if (androidBackupRemoved && androidSystemRemoved) {
+					break;
+				}
+			}
+		}
+		Collections.sort(apps, new ApplicationInfo.DisplayNameComparator(packageManager));
+		return apps;
+	}
+
+	/**
+	 * Launch an application
+	 * 
+	 * @param c
+	 *            Context of application
+	 * 
+	 * @param pm
+	 *            the related package manager of the context
+	 * 
+	 * @param pkgName
+	 *            Name of the package to run
+	 */
+	public static boolean launchApp(Context c, PackageManager pm, String pkgName) {
+		Intent intent = pm.getLaunchIntentForPackage(pkgName); // query the intent for launching
+		if (intent != null) { // if intent is available
+			try {
+				c.startActivity(intent); // launch application
+				return true; // if succeed
+			} catch (ActivityNotFoundException ex) { // if application failed to launch
+				Toast.makeText(c, R.string.toast_notification_apprun_notfound, Toast.LENGTH_LONG).show(); // quick message notification
+			}
+		}
+		return false; // by default, fail to launch
+	}
+
+	private final Context context = this;
+
+	private Core core = new Core();
+
+	private ListView mListAppInfo;
+
+	private ApplicationInfo selectedApp;
+
+	public void createApplicationInformationDialog(String appName, String packageName, String apkPath, String appVersion) {
+		appPopupDialog.hide();
+		final Dialog applicationInformationDialog = new Dialog(context);
+		applicationInformationDialog.setTitle(getString(R.string.applications_information_current_version_info_title));
+		applicationInformationDialog.setContentView(R.layout.application_info_dialog);
+
+		TextView tvAppName = (TextView) applicationInformationDialog.findViewById(R.id.appNameValue);
+		tvAppName.setText(appName);
+
+		TextView tvPackageName = (TextView) applicationInformationDialog.findViewById(R.id.packageNameValue);
+		tvPackageName.setText(packageName);
+
+		TextView tvApkPath = (TextView) applicationInformationDialog.findViewById(R.id.appApkPathValue);
+		tvApkPath.setText(apkPath);
+
+		TextView tvappVersion = (TextView) applicationInformationDialog.findViewById(R.id.appVersionValue);
+		tvappVersion.setText(appVersion);
+
+		applicationInformationDialog.setCanceledOnTouchOutside(true);
+		applicationInformationDialog.show();
+
+		applicationInformationDialog.setOnDismissListener(new OnDismissListener() {
+			@Override
+			public void onDismiss(DialogInterface dialog) {
+				appPopupDialog.show();
+			}
+		});
+	}
+
+	public void createCurrentApplicationInformationDialog(ApplicationInfo app) {
+		String appVersion;
+		try {
+			PackageInfo info = getPackageManager().getPackageInfo(app.packageName, 0);
+			appVersion = info.versionName + " (" + info.versionCode + ")";
+		} catch (NameNotFoundException e) {
+			appVersion = context.getResources().getString(R.string.application_version_not_available);
+		}
+
+		createApplicationInformationDialog("" + app.loadLabel(getPackageManager()), app.packageName, app.sourceDir, appVersion);
 	}
 
 	/** Called when the activity is first created. */
@@ -51,6 +152,7 @@ public class ApplicationsActivity extends Activity {
 		refreshAppList(); // Populates the application list
 
 		mListAppInfo.setOnItemClickListener(new OnItemClickListener() { // implement event when an item on list view is selected
+	
 					public void onItemClick(final AdapterView parent, View view, int pos, long id) {
 						// get the list adapter
 						AppInfoAdapter appInfoAdapter = (AppInfoAdapter) parent.getAdapter(); // get selected item on the list
@@ -96,7 +198,6 @@ public class ApplicationsActivity extends Activity {
 						dialogUninstallButton.setOnClickListener(new OnClickListener() {
 							public void onClick(View v) {
 								if (InformationActivity.isRooted()) {
-
 									if (core.applicationsType(selectedApp.sourceDir) == 1) { // A System App
 										final AlertDialog.Builder uninstallSystemAppWarningDialog = new AlertDialog.Builder(context);
 										uninstallSystemAppWarningDialog.setTitle(getString(R.string.uninstall_system_app_warning_dialog_title));
@@ -178,117 +279,12 @@ public class ApplicationsActivity extends Activity {
 	}
 
 	/**
-	 * Get all installed application on device and return a list
-	 * 
-	 * @param c
-	 *            Context of application
-	 * 
-	 * @return list of installed applications
+	 * Refreshes the application list
 	 */
-	public static List<ApplicationInfo> getInstalledApplication(Context context) {
-		PackageManager packageManager = context.getPackageManager();
-		List<ApplicationInfo> apps = packageManager.getInstalledApplications(0);
-
-		/* Loops through the app list and removes Android Backup & Android System */
-		boolean androidBackupRemoved = false, androidSystemRemoved = false;
-		for (int i = 0; i < apps.size(); i++) {
-			if (apps.get(i).loadLabel(packageManager).equals("Android Backup")) {
-				apps.remove(i);
-				androidBackupRemoved = true;
-				if (androidBackupRemoved && androidSystemRemoved) {
-					break;
-				}
-			} else if ((apps.get(i).loadLabel(packageManager).equals("Android System"))) {
-				apps.remove(i);
-				androidSystemRemoved = true;
-				if (androidBackupRemoved && androidSystemRemoved) {
-					break;
-				}
-			}
-		}
-		Collections.sort(apps, new ApplicationInfo.DisplayNameComparator(packageManager));
-		return apps;
-	}
-
-	public void createCurrentApplicationInformationDialog(ApplicationInfo app) {
-		String appVersion;
-		try {
-			PackageInfo info = getPackageManager().getPackageInfo(app.packageName, 0);
-			appVersion = info.versionName + " (" + info.versionCode + ")";
-		} catch (NameNotFoundException e) {
-			appVersion = context.getResources().getString(R.string.application_version_not_available);
-		}
-
-		createApplicationInformationDialog("" + app.loadLabel(getPackageManager()), app.packageName, app.sourceDir, appVersion);
-	}
-
-	public void createApplicationInformationDialog(String appName, String packageName, String apkPath, String appVersion) {
-		appPopupDialog.hide();
-		final Dialog applicationInformationDialog = new Dialog(context);
-		applicationInformationDialog.setTitle(getString(R.string.applications_information_current_version_info_title));
-		applicationInformationDialog.setContentView(R.layout.application_info_dialog);
-
-		TextView tvAppName = (TextView) applicationInformationDialog.findViewById(R.id.appNameValue);
-		tvAppName.setText(appName);
-
-		TextView tvPackageName = (TextView) applicationInformationDialog.findViewById(R.id.packageNameValue);
-		tvPackageName.setText(packageName);
-
-		TextView tvApkPath = (TextView) applicationInformationDialog.findViewById(R.id.appApkPathValue);
-		tvApkPath.setText(apkPath);
-
-		TextView tvappVersion = (TextView) applicationInformationDialog.findViewById(R.id.appVersionValue);
-		tvappVersion.setText(appVersion);
-
-		applicationInformationDialog.setCanceledOnTouchOutside(true);
-		applicationInformationDialog.show();
-
-		applicationInformationDialog.setOnDismissListener(new OnDismissListener() {
-			@Override
-			public void onDismiss(DialogInterface dialog) {
-				appPopupDialog.show();
-			}
-		});
-	}
-
-	/**
-	 * Launch an application
-	 * 
-	 * @param c
-	 *            Context of application
-	 * 
-	 * @param pm
-	 *            the related package manager of the context
-	 * 
-	 * @param pkgName
-	 *            Name of the package to run
-	 */
-	public static boolean launchApp(Context c, PackageManager pm, String pkgName) {
-		// query the intent for launching
-		Intent intent = pm.getLaunchIntentForPackage(pkgName);
-		// if intent is available
-		if (intent != null) {
-			try {
-				// launch application
-				c.startActivity(intent);
-				// if succeed
-				return true;
-				// if fail
-			} catch (ActivityNotFoundException ex) {
-				// quick message notification
-				Toast.makeText(c, R.string.toast_notification_apprun_notfound, Toast.LENGTH_LONG).show();
-			}
-		}
-		// by default, fail to launch
-		return false;
-	}
-
-	static ListView backupList;
-
-	public static void displayBackupOnAppPopup(String packageName) {
-		backupList = (ListView) appPopupDialog.findViewById(R.id.lvbackups);
-		BackupListAdapter backupListAdapter = new BackupListAdapter(appPopupDialog.getContext(), BackupStore.getPackageBackupInformation(packageName)); // create new adapter
-		backupList.setAdapter(backupListAdapter); // set adapter to list view
+	private void refreshAppList() {
+		mListAppInfo = (ListView) findViewById(R.id.lvApps); // load list application
+		AppInfoAdapter appInfoAdapter = new AppInfoAdapter(this, getInstalledApplication(this), getPackageManager()); // create new adapter
+		mListAppInfo.setAdapter(appInfoAdapter); // set adapter to list view
 	}
 
 }

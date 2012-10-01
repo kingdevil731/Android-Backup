@@ -5,7 +5,6 @@ import java.io.File;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.widget.TabHost;
@@ -65,12 +64,6 @@ public class AndroidBackupActivity extends TabActivity {
 		}
 	}
 
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-	}
-
 	/**
 	 * Called first time user clicks on the menu button
 	 */
@@ -78,6 +71,12 @@ public class AndroidBackupActivity extends TabActivity {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.main_menu, menu);
 		return true;
+	}
+
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
 	}
 
 }

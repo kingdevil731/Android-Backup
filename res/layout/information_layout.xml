@@ -100,4 +100,11 @@
         </TableRow>
     </TableLayout>
 
+    <TextView
+        android:id="@+id/backupFolderView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/information_tab_backupFolder"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
 </LinearLayout>

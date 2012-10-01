@@ -18,8 +18,12 @@
     <string name="applications_popup_uninstall">Uninstall</string>
     <string name="applications_popup_backup">Backup</string>
     <string name="applications_popup_wipe_data">Wipe Data</string>
-    <string name="applications_popup_restore">Restore</string>
+    <string name="applications_popup_restore_backup">Restore</string>
     <string name="applications_popup_delete_backup">Delete</string>
+    <string name="applications_popup_restore_what">What would you like to restore?</string>
+    <string name="applications_popup_restore_data_only">Data Only</string>
+    <string name="applications_popup_restore_apk_only">App Only</string>
+    <string name="applications_popup_restore_data_and_apk">Data &amp; App</string>
     <string name="applications_information_current_version_info_title">Current Version Info</string>
     <string name="applications_information_app_name">App Name:</string>
     <string name="applications_information_package_name">Package Name:</string>
@@ -32,6 +36,7 @@
     <string name="toast_notification_app_uninstalled_root">Application Uninstalled</string>
     <string name="information_tab_RootAccess">Root access:</string>
     <string name="information_tab_BusyBox">BusyBox:</string>
+    <string name="information_tab_backupFolder">Backup Folder:</string>
     <string name="information_tab_offerBusyBox">A BusyBox installation has not been found. Would you like to download it from the Google Play Store?</string>
     <string name="information_tab_message_BusyBox_Not_Found">BusyBox Not Found</string>
     <string name="information_tab_systemStorage">System:</string>

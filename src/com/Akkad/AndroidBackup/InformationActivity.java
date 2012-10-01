@@ -1,8 +1,5 @@
 package com.Akkad.AndroidBackup;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -14,22 +11,100 @@ import android.os.StatFs;
 import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.stericson.RootTools.RootTools;
 
 public class InformationActivity extends Activity {
 
-	private static final String TAG = "Information Activity";
 	private static boolean rooted;
+	private static final String TAG = "Information Activity";
+
+	public static long getDataFreeSpace() {
+		long availableSpace = -1L;
+		StatFs stat = new StatFs(Environment.getDataDirectory().getPath());
+		availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
+		return availableSpace;
+	}
+
+	public static long getDataSize() {
+		long availableSpace = -1L;
+		StatFs stat = new StatFs(Environment.getDataDirectory().getPath());
+		availableSpace = (long) stat.getBlockCount() * (long) stat.getBlockSize();
+		return availableSpace;
+	}
+
+	public static long getExternalStorageFreeSpace() {
+		long availableSpace = -1L;
+		StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+		availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
+		return availableSpace;
+	}
+
+	public static long getExternalStorageSize() {
+		long availableSpace = -1L;
+		StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+		availableSpace = (long) stat.getBlockCount() * (long) stat.getBlockSize();
+		return availableSpace;
+	}
+
+	public static long getInternalStorageFreeSpace() {
+		long availableSpace = -1L;
+		StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+		availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
+		return availableSpace;
+	}
+
+	public static long getInternalStorageSize() {
+		long availableSpace = -1L;
+		StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+		availableSpace = (long) stat.getBlockCount() * (long) stat.getBlockSize();
+		return availableSpace;
+	}
+
+	public static long getSystemFreeSpace() {
+		long freeSpace = -1L;
+		StatFs stat = new StatFs(Environment.getRootDirectory().getPath());
+		freeSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
+		return freeSpace;
+	}
+
+	public static long getSystemSize() {
+		long availableSpace = -1L;
+		StatFs stat = new StatFs(Environment.getRootDirectory().getPath());
+		availableSpace = (long) stat.getBlockCount() * (long) stat.getBlockSize();
+		return availableSpace;
+	}
+
+	public static boolean hasExternalStorage() {
+		return getExternalStorageSize() > 0;
+	}
+
+	/**
+	 * @return the rooted
+	 */
+	public static boolean isRooted() {
+		// return rooted;
+		return true;
+	}
+
 	private boolean busybox;
+
 	final Context context = this;
-	private TextView systemStorageView, dataStorageView, externalStorageView;
+
 	private ProgressBar systemStorageBar, dataStorageBar, externalStorageBar;
+
+	private TextView systemStorageView, dataStorageView, externalStorageView;
+
+	private void offerBusyBox() {
+		RootTools.offerBusyBox(this);
+	}
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.information_layout);
+		TextView lblBackupFolder = (TextView) findViewById(R.id.backupFolderView);
+		lblBackupFolder.setText(getResources().getString(R.string.information_tab_backupFolder) + " " + BackupStore.getBackupFolderLocation());
+
 		TextView lblroot = (TextView) findViewById(R.id.rootView);
 		if (RootTools.isRootAvailable() && RootTools.isAccessGiven()) {
 			rooted = true;
@@ -76,77 +151,6 @@ public class InformationActivity extends Activity {
 	protected void onResume() {
 		updateStorageInformation();
 		super.onResume();
-	}
-
-	private void offerBusyBox() {
-		RootTools.offerBusyBox(this);
-	}
-
-	/**
-	 * @return the rooted
-	 */
-	public static boolean isRooted() {
-		return rooted;
-	}
-
-	public static boolean hasExternalStorage() {
-		return getExternalStorageSize() > 0;
-	}
-
-	public static long getDataSize() {
-		long availableSpace = -1L;
-		StatFs stat = new StatFs(Environment.getDataDirectory().getPath());
-		availableSpace = (long) stat.getBlockCount() * (long) stat.getBlockSize();
-		return availableSpace;
-	}
-
-	public static long getDataFreeSpace() {
-		long availableSpace = -1L;
-		StatFs stat = new StatFs(Environment.getDataDirectory().getPath());
-		availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
-		return availableSpace;
-	}
-
-	public static long getSystemFreeSpace() {
-		long freeSpace = -1L;
-		StatFs stat = new StatFs(Environment.getRootDirectory().getPath());
-		freeSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
-		return freeSpace;
-	}
-
-	public static long getSystemSize() {
-		long availableSpace = -1L;
-		StatFs stat = new StatFs(Environment.getRootDirectory().getPath());
-		availableSpace = (long) stat.getBlockCount() * (long) stat.getBlockSize();
-		return availableSpace;
-	}
-
-	public static long getInternalStorageSize() {
-		long availableSpace = -1L;
-		StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
-		availableSpace = (long) stat.getBlockCount() * (long) stat.getBlockSize();
-		return availableSpace;
-	}
-
-	public static long getInternalStorageFreeSpace() {
-		long availableSpace = -1L;
-		StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
-		availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
-		return availableSpace;
-	}
-
-	public static long getExternalStorageSize() {
-		long availableSpace = -1L;
-		StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
-		availableSpace = (long) stat.getBlockCount() * (long) stat.getBlockSize();
-		return availableSpace;
-	}
-
-	public static long getExternalStorageFreeSpace() {
-		long availableSpace = -1L;
-		StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
-		availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
-		return availableSpace;
 	}
 
 	public void updateStorageInformation() {

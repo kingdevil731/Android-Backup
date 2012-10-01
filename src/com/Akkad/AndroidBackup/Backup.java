@@ -32,12 +32,6 @@ public class Backup {
 
 	private String informationLocation;
 
-	public Backup() {
-		this.app_target_sdk_version = -1;
-		this.app_install_location = -1;
-		generateAPKAndDataLocations();
-	}
-
 	/**
 	 * @param backupDate
 	 * @param app_label
@@ -59,6 +53,13 @@ public class Backup {
 		generateAPKAndDataLocations();
 	}
 
+	/**
+	 */
+	public Backup(String informationFilePath) {
+		loadBackupInformation(informationFilePath);
+		generateDate();
+	}
+
 	private void generateAPKAndDataLocations() {
 		this.apkLocation = BackupStore.getBackupFolderLocation() + app_package_name + "-" + formattedDate + ".apk";
 		this.dataLocation = BackupStore.getBackupFolderLocation() + app_package_name + "-" + formattedDate + ".tar.gz";
@@ -73,7 +74,7 @@ public class Backup {
 	 * @return the apkLocation
 	 */
 	public String getApkLocation() {
-		return apkLocation;
+		return BackupStore.getBackupFolderLocation() + app_package_name + "-" + formattedDate + ".apk";
 	}
 
 	/**
@@ -129,7 +130,7 @@ public class Backup {
 	 * @return the dataLocation
 	 */
 	public String getDataLocation() {
-		return dataLocation;
+		return BackupStore.getBackupFolderLocation() + app_package_name + "-" + formattedDate + ".tar.gz";
 	}
 
 	/**
@@ -237,8 +238,10 @@ public class Backup {
 	 * 
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
-		return "Backup [apkLocation=" + apkLocation + ", app_apk_md5=" + app_apk_md5 + ", app_data_md5=" + app_data_md5 + ", app_install_location=" + app_install_location + ", app_label=" + app_label + ", app_package_name=" + app_package_name
-				+ ", app_target_sdk_version=" + app_target_sdk_version + ", backupDate=" + backupDate + ", dataLocation=" + dataLocation + ", formattedDate=" + formattedDate + "]";
+		return "Backup [app_apk_md5=" + app_apk_md5 + ", app_data_md5=" + app_data_md5 + ", app_install_location=" + app_install_location + ", app_label=" + app_label + ", app_package_name=" + app_package_name + ", app_target_sdk_version="
+				+ app_target_sdk_version + ", backupDate=" + backupDate + ", formattedDate=" + formattedDate + ", informationLocation=" + informationLocation + "]";
 	}
+
 }

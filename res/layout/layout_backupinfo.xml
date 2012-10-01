@@ -7,7 +7,7 @@
         android:id="@+id/restore_backup"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:text="@string/applications_popup_restore" />
+        android:text="@string/applications_popup_restore_backup" />
 
     <LinearLayout
         android:layout_width="0dip"

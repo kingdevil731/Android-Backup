@@ -1,6 +1,5 @@
 package com.Akkad.AndroidBackup;
 
-import java.io.File;
 import java.util.List;
 
 import android.content.Context;
@@ -17,11 +16,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class AppInfoAdapter extends BaseAdapter {
+	private Core core = new Core();
 	private Context mContext;
+	@SuppressWarnings("rawtypes")
 	private List mListAppInfo;
 	private PackageManager mPackManager;
-	private Core core = new Core();
 
+	@SuppressWarnings("rawtypes")
 	public AppInfoAdapter(Context c, List list, PackageManager pm) {
 		mContext = c;
 		mListAppInfo = list;

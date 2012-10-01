@@ -32,7 +32,7 @@ public class TasksActivity extends ListActivity {
 			wipeDalvikCacheWarningDialog.setTitle(getString(R.string.wipe_dalvik_cache_warning_dialog_title));
 			wipeDalvikCacheWarningDialog.setMessage(getString(R.string.wipe_dalvik_cache_warning_dialog_text));
 			wipeDalvikCacheWarningDialog.setIcon(android.R.drawable.ic_dialog_alert);
-			
+
 			wipeDalvikCacheWarningDialog.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
 					core.wipeDalvikCache();
