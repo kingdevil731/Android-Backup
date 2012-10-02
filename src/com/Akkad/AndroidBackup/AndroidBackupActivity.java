@@ -4,9 +4,11 @@ import java.io.File;
 
 import android.app.TabActivity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.Window;
 import android.widget.TabHost;
 import android.widget.TabHost.TabSpec;
 
@@ -16,6 +18,9 @@ public class AndroidBackupActivity extends TabActivity {
 	/** Called when the activity is first created. */
 	public void onCreate(Bundle savedInstanceState) {
 		RootTools.debugMode = true;
+		if (Build.VERSION.SDK_INT < 11) { // Disable title bar on android devices older than Honeycomb (API Level 11)
+			requestWindowFeature(Window.FEATURE_NO_TITLE);
+		}
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
