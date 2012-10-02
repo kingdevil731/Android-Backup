@@ -43,8 +43,10 @@
     <string name="information_tab_systemStorage">System:</string>
     <string name="information_tab_dataStorage">Data:</string>
     <string name="information_tab_internalStorage">Internal:</string>
+    <string name="wipe_dalvik_cache">مسح ذاكرة التخزين دالفيك</string>
     <string name="wipe_dalvik_cache_warning_dialog_title">تحذير</string>
-    <string name="wipe_dalvik_cache_warning_dialog_text">سيؤدي مسح ذاكرة التخزيندلفك دلفك للجهاز. سيتم إعادة تشغيل الجهاز بعد هذه العملية. التمهيد الأول سوف يستغرق وقتاً طويلاً بعد هذه العملية. هل تريد المتابعة؟</string>
+    <string name="wipe_dalvik_cache_warning_dialog_text">سيؤدي مسح ذاكرة التخزين دالفيك للجهاز. سيتم إعادة تشغيل الجهاز بعد هذه العملية. التمهيد الأول سوف يستغرق وقتاً طويلاً بعد هذه العملية. هل تريد المتابعة؟</string>
+    <string name="reboot_Device">إعادة التشغيل</string>
     <string name="force_close_app">إغلاق التطبيق</string>
     <string name="open_system_app_info">فتح معلومات التطبيق</string>
 

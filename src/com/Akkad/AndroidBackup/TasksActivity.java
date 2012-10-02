@@ -1,5 +1,7 @@
 package com.Akkad.AndroidBackup;
 
+import java.util.ArrayList;
+
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
@@ -10,10 +12,14 @@ import android.widget.ListView;
 
 public class TasksActivity extends ListActivity {
 	Core core = new Core();
-	String[] tasks = { "Wipe Dalvik Cache", "Reboot Device" };
+
+	ArrayList<String> tasks;
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		tasks = new ArrayList<String>();
+		tasks.add(getString(R.string.wipe_dalvik_cache));
+		tasks.add(getString(R.string.reboot_Device));
 		setListAdapter(new ArrayAdapter<String>(TasksActivity.this, android.R.layout.simple_list_item_1, tasks));
 	}
 
