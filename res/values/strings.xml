@@ -47,6 +47,8 @@
     <string name="wipe_dalvik_cache_warning_dialog_title">Warning</string>
     <string name="wipe_dalvik_cache_warning_dialog_text">This will clear the Dalvik Cache of your device.\n\nThe device will be rebooted after this process.\n\nIt\'s normal for the device to take a long time to boot after this operation.\n\nDo you want to proceed?</string>
     <string name="reboot_Device">Reboot Device</string>
+    <string name="delete_All_Backups">Delete All Backups</string>
+    <string name="delete_All_Backups_Failed_Message">Couldn\'t delete all the backups. Please use a file manager to delete the folder </string>
     <string name="force_close_app">Force Close App</string>
     <string name="open_system_app_info">Open System App Info</string>
 

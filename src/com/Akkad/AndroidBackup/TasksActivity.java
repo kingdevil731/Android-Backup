@@ -1,14 +1,19 @@
 package com.Akkad.AndroidBackup;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class TasksActivity extends ListActivity {
 	Core core = new Core();
@@ -20,6 +25,7 @@ public class TasksActivity extends ListActivity {
 		tasks = new ArrayList<String>();
 		tasks.add(getString(R.string.wipe_dalvik_cache));
 		tasks.add(getString(R.string.reboot_Device));
+		tasks.add(getString(R.string.delete_All_Backups));
 		setListAdapter(new ArrayAdapter<String>(TasksActivity.this, android.R.layout.simple_list_item_1, tasks));
 	}
 
@@ -52,8 +58,29 @@ public class TasksActivity extends ListActivity {
 		case 1:
 			core.rebootDevice();
 			break;
+		case 2:
+			deleteAllBackups();
+			break;
 		}
-
 	}
 
+	public void deleteAllBackups() {
+
+		File backupDirectory = new File(BackupStore.getBackupFolderLocation());
+		boolean failed = false;
+		String[] children = backupDirectory.list();
+		for (int i = 0; i < children.length; i++) {
+			if (!new File(backupDirectory, children[i]).delete()) {
+				failed = true;
+				break;
+			}
+		}
+		if (!failed) { // If successful reload application
+			Intent refresh = new Intent(this, AndroidBackupActivity.class);
+			startActivity(refresh);
+			this.finish();
+		} else {
+			Toast.makeText(getParent(), getString(R.string.delete_All_Backups_Failed_Message) + BackupStore.getBackupFolderLocation(), Toast.LENGTH_LONG).show();
+		}
+	}
 }
