@@ -104,7 +104,7 @@ public class ApplicationsActivity extends Activity {
 
 	private ApplicationInfo selectedApp;
 
-	public void createApplicationInformationDialog(String appName, String packageName, String apkPath, String appVersion) {
+	public void createApplicationInformationDialog(String appName, String packageName, String appVersion, String apkPath, String dataPath) {
 		appPopupDialog.hide();
 		final Dialog applicationInformationDialog = new Dialog(context);
 		applicationInformationDialog.setTitle(getString(R.string.applications_information_current_version_info_title));
@@ -116,11 +116,14 @@ public class ApplicationsActivity extends Activity {
 		TextView tvPackageName = (TextView) applicationInformationDialog.findViewById(R.id.packageNameValue);
 		tvPackageName.setText(packageName);
 
+		TextView tvappVersion = (TextView) applicationInformationDialog.findViewById(R.id.appVersionValue);
+		tvappVersion.setText(appVersion);
+
 		TextView tvApkPath = (TextView) applicationInformationDialog.findViewById(R.id.appApkPathValue);
 		tvApkPath.setText(apkPath);
 
-		TextView tvappVersion = (TextView) applicationInformationDialog.findViewById(R.id.appVersionValue);
-		tvappVersion.setText(appVersion);
+		TextView tvDataPath = (TextView) applicationInformationDialog.findViewById(R.id.appDataPathValue);
+		tvDataPath.setText(dataPath);
 
 		applicationInformationDialog.setCanceledOnTouchOutside(true);
 		applicationInformationDialog.show();
@@ -142,7 +145,7 @@ public class ApplicationsActivity extends Activity {
 			appVersion = context.getResources().getString(R.string.application_version_not_available);
 		}
 
-		createApplicationInformationDialog("" + app.loadLabel(getPackageManager()), app.packageName, app.sourceDir, appVersion);
+		createApplicationInformationDialog("" + app.loadLabel(getPackageManager()), app.packageName, appVersion, app.sourceDir, app.dataDir);
 	}
 
 	/** Called when the activity is first created. */
@@ -152,7 +155,7 @@ public class ApplicationsActivity extends Activity {
 		refreshAppList(); // Populates the application list
 
 		mListAppInfo.setOnItemClickListener(new OnItemClickListener() { // implement event when an item on list view is selected
-	
+
 					public void onItemClick(final AdapterView parent, View view, int pos, long id) {
 						// get the list adapter
 						AppInfoAdapter appInfoAdapter = (AppInfoAdapter) parent.getAdapter(); // get selected item on the list
@@ -233,7 +236,7 @@ public class ApplicationsActivity extends Activity {
 							dialogWipeDataButton.setOnClickListener(new OnClickListener() {
 								@Override
 								public void onClick(View v) {
-									if (core.wipeAppData(selectedApp.packageName)) {
+									if (Core.wipeAppData(selectedApp.packageName)) {
 										Toast.makeText(ApplicationsActivity.this, selectedApp.loadLabel(getPackageManager()) + "'s data deleted", Toast.LENGTH_LONG).show();
 									} else {
 										Toast.makeText(ApplicationsActivity.this, selectedApp.loadLabel(getPackageManager()) + "'s data not deleted", Toast.LENGTH_LONG).show();

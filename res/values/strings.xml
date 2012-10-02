@@ -29,6 +29,7 @@
     <string name="applications_information_package_name">Package Name:</string>
     <string name="applications_information_app_version">Package Version:</string>
     <string name="applications_information_APK_path">APK Path:</string>
+    <string name="applications_information_data_path">Data Path:</string>
     <string name="uninstall_system_app_warning_dialog_title">Warning</string>
     <string name="uninstall_system_app_warning_dialog_text"> is a System package that may be needed for the device to work properly.\n\nRemoving this package may break your phone!\n\nWould you like to uninstall it (At your own risk).</string>
     <string name="toast_notification_apprun_notfound">Application Not Found</string>
