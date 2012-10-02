@@ -47,7 +47,7 @@
     <string name="wipe_dalvik_cache_warning_dialog_title">تحذير</string>
     <string name="wipe_dalvik_cache_warning_dialog_text">سيؤدي مسح ذاكرة التخزين دالفيك للجهاز. سيتم إعادة تشغيل الجهاز بعد هذه العملية. التمهيد الأول سوف يستغرق وقتاً طويلاً بعد هذه العملية. هل تريد المتابعة؟</string>
     <string name="reboot_Device">إعادة التشغيل</string>
-    <string name="delete_All_Backups">ذف كافة النسخ الاحتياطية</string>
+    <string name="delete_All_Backups">حذف كافة النسخ الاحتياطية</string>
     <string name="delete_All_Backups_Failed_Message">لا يمكن حذف كافة النسخ الاحتياطية. الرجاء حذف باستخدام مدير ملفات الملف الذي يقع في مسار </string>
     <string name="force_close_app">إغلاق التطبيق</string>
     <string name="open_system_app_info">فتح معلومات التطبيق</string>
