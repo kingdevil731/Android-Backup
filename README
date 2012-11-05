@@ -1,4 +1,5 @@
 Android Backup By Raafat Akkad
 
-This program is licensed under the GPL V2
-This program uses the Root Tools library
+This program is licensed under the GPL V2 or later
+This program uses the Root Tools library http://code.google.com/p/roottools/ licensed under the Apache License, Version 2.0
+This program uses the ActionBarSherlock library https://github.com/JakeWharton/ActionBarSherlock licensed under the Apache License, Version 2.0

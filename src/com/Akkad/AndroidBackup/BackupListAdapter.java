@@ -66,7 +66,7 @@ public class BackupListAdapter extends BaseAdapter {
 			public void onClick(View v) {
 				Backup backup = getItem(position);
 				if (new File(backup.getApkLocation()).delete() && new File(backup.getDataLocation()).delete() && new File(backup.getInformationLocation()).delete()) {
-					ApplicationsActivity.displayBackupOnAppPopup(backup.getApp_package_name()); // updateBackupList
+					ApplicationsFragment.displayBackupOnAppPopup(backup.getApp_package_name()); // updateBackupList
 				} else {
 					Log.e(TAG, "Could not delete Backup");
 					Toast.makeText(context, "Could not delete Backup " + backup.getApp_label() + " " + backup.getBackupDate().getTime().toGMTString(), Toast.LENGTH_LONG).show();
@@ -112,7 +112,7 @@ public class BackupListAdapter extends BaseAdapter {
 				Backup backup = getItem(position);
 
 				if (new File(backup.getApkLocation()).delete() && new File(backup.getDataLocation()).delete() && new File(backup.getInformationLocation()).delete()) {
-					ApplicationsActivity.displayBackupOnAppPopup(backup.getApp_package_name()); // updateBackupList
+					ApplicationsFragment.displayBackupOnAppPopup(backup.getApp_package_name()); // updateBackupList
 				} else {
 					Log.e(TAG, "Could not delete Backup");
 					Toast.makeText(context, "Could not delete Backup " + backup.getApp_label() + " " + backup.getBackupDate().getTime().toGMTString(), Toast.LENGTH_LONG).show();

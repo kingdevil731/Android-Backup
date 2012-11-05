@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="4"
-        android:targetSdkVersion="15" />
+        android:targetSdkVersion="16" />
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -17,7 +17,8 @@
         android:label="@string/app_name" >
         <activity
             android:name=".AndroidBackupActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Sherlock" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,16 +27,16 @@
         </activity>
 
         <!-- Information Activity -->
-        <activity android:name=".InformationActivity" />
+        <activity android:name=".InformationFragment" />
 
         <!-- Tasks Activity -->
-        <activity android:name=".TasksActivity" />
+        <activity android:name=".TasksFragment" />
 
         <!-- Applications Activity -->
-        <activity android:name=".ApplicationsActivity" />
+        <activity android:name=".ApplicationsFragment" />
 
         <!-- Schedule Activity -->
-        <activity android:name=".ScheduleActivity" />
+        <activity android:name=".ScheduleFragment" />
     </application>
 
 </manifest>

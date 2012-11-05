@@ -240,8 +240,9 @@ public class Backup {
 	 */
 	@Override
 	public String toString() {
-		return "Backup [app_apk_md5=" + app_apk_md5 + ", app_data_md5=" + app_data_md5 + ", app_install_location=" + app_install_location + ", app_label=" + app_label + ", app_package_name=" + app_package_name + ", app_target_sdk_version="
-				+ app_target_sdk_version + ", backupDate=" + backupDate + ", formattedDate=" + formattedDate + ", informationLocation=" + informationLocation + "]";
+		return "Backup [app_apk_md5=" + app_apk_md5 + ", app_data_md5=" + app_data_md5 + ", app_install_location=" + app_install_location + ", app_label=" + app_label + ", app_package_name="
+				+ app_package_name + ", app_target_sdk_version=" + app_target_sdk_version + ", backupDate=" + backupDate + ", formattedDate=" + formattedDate + ", informationLocation="
+				+ informationLocation + "]";
 	}
 
 }

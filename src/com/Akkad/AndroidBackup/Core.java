@@ -209,7 +209,7 @@ public class Core extends Activity {
 
 	public String backupApplicationApk(String packageName, String apkLocation, String formattedDate) {
 		File apk = new File(apkLocation);
-		if (apk.length() <= InformationActivity.getExternalStorageFreeSpace()) { // Checks that there is enough free space on the sd card
+		if (apk.length() <= InformationFragment.getExternalStorageFreeSpace()) { // Checks that there is enough free space on the sd card
 			String apkBackupLocation = BackupStore.getBackupFolderLocation() + packageName + "-" + formattedDate + ".apk";
 			RootTools.copyFile(apkLocation, apkBackupLocation, false, false);
 

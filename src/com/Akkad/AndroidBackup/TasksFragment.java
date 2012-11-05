@@ -4,29 +4,37 @@ import java.io.File;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
-import android.app.ListActivity;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class TasksActivity extends ListActivity {
-	Core core = new Core();
+import com.actionbarsherlock.app.SherlockListFragment;
 
+public class TasksFragment extends SherlockListFragment {
+
+	Core core = new Core();
 	ArrayList<String> tasks;
 
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		tasks = new ArrayList<String>();
 		tasks.add(getString(R.string.wipe_dalvik_cache));
 		tasks.add(getString(R.string.reboot_Device));
 		tasks.add(getString(R.string.delete_All_Backups));
-		setListAdapter(new ArrayAdapter<String>(TasksActivity.this, android.R.layout.simple_list_item_1, tasks));
+
+		/** Creating array adapter to set data in listview */
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity().getBaseContext(), android.R.layout.simple_list_item_1, tasks);
+
+		/** Setting the array adapter to the listview */
+		setListAdapter(adapter);
+
+		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
 	/*
@@ -35,11 +43,11 @@ public class TasksActivity extends ListActivity {
 	 * @see android.app.ListActivity#onListItemClick(android.widget.ListView, android.view.View, int, long)
 	 */
 	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
+	public void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		switch (position) {
 		case 0:
-			AlertDialog.Builder wipeDalvikCacheWarningDialog = new AlertDialog.Builder(TasksActivity.this);
+			AlertDialog.Builder wipeDalvikCacheWarningDialog = new AlertDialog.Builder(getActivity());
 
 			wipeDalvikCacheWarningDialog.setTitle(getString(R.string.wipe_dalvik_cache_warning_dialog_title));
 			wipeDalvikCacheWarningDialog.setMessage(getString(R.string.wipe_dalvik_cache_warning_dialog_text));
@@ -76,11 +84,11 @@ public class TasksActivity extends ListActivity {
 			}
 		}
 		if (!failed) { // If successful reload application
-			Intent refresh = new Intent(this, AndroidBackupActivity.class);
+			Intent refresh = new Intent(getActivity(), AndroidBackupActivity.class);
 			startActivity(refresh);
-			this.finish();
+			getActivity().finish();
 		} else {
-			Toast.makeText(getParent(), getString(R.string.delete_All_Backups_Failed_Message) + BackupStore.getBackupFolderLocation(), Toast.LENGTH_LONG).show();
+			Toast.makeText(getActivity().getParent(), getString(R.string.delete_All_Backups_Failed_Message) + BackupStore.getBackupFolderLocation(), Toast.LENGTH_LONG).show();
 		}
 	}
 }

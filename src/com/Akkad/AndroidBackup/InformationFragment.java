@@ -1,20 +1,22 @@
 package com.Akkad.AndroidBackup;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockFragment;
 import com.stericson.RootTools.RootTools;
 
-public class InformationActivity extends Activity {
+public class InformationFragment extends SherlockFragment {
 
 	private static boolean rooted;
 	private static final String TAG = "Information Activity";
@@ -83,29 +85,26 @@ public class InformationActivity extends Activity {
 	 * @return the rooted
 	 */
 	public static boolean isRooted() {
-		// return rooted;
-		return true;
+		return rooted;
 	}
 
 	private boolean busybox;
 
-	final Context context = this;
-
 	private ProgressBar systemStorageBar, dataStorageBar, externalStorageBar;
 
 	private TextView systemStorageView, dataStorageView, externalStorageView;
+	View view;
 
-	private void offerBusyBox() {
-		RootTools.offerBusyBox(this);
-	}
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.information_layout);
-		TextView lblBackupFolder = (TextView) findViewById(R.id.backupFolderView);
+
+		view = inflater.inflate(R.layout.information_layout, container, false);
+
+		TextView lblBackupFolder = (TextView) view.findViewById(R.id.backupFolderView);
 		lblBackupFolder.setText(getResources().getString(R.string.information_tab_backupFolder) + " " + BackupStore.getBackupFolderLocation());
 
-		TextView lblroot = (TextView) findViewById(R.id.rootView);
+		TextView lblroot = (TextView) view.findViewById(R.id.rootView);
 		if (RootTools.isRootAvailable() && RootTools.isAccessGiven()) {
 			rooted = true;
 			lblroot.setText(getResources().getString(R.string.information_tab_RootAccess) + " " + getResources().getString(R.string.yes));
@@ -114,18 +113,18 @@ public class InformationActivity extends Activity {
 			Log.d(TAG, "Not Rooted");
 			lblroot.setText(getResources().getString(R.string.information_tab_RootAccess) + " " + getResources().getString(R.string.no));
 		}
-		TextView lblBusybox = (TextView) findViewById(R.id.busyboxView);
+		TextView lblBusybox = (TextView) view.findViewById(R.id.busyboxView);
 		if (RootTools.isBusyboxAvailable() && rooted) {
 			busybox = true;
 			lblBusybox.setText(getResources().getString(R.string.information_tab_BusyBox) + " " + getResources().getString(R.string.yes) + " " + RootTools.getBusyBoxVersion());
 			Log.d(TAG, "BusyBox available");
 		} else if ((RootTools.isRootAvailable() && RootTools.isAccessGiven()) && !RootTools.isBusyboxAvailable()) {
-			AlertDialog.Builder builder = new AlertDialog.Builder(context);
+			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			builder.setTitle(getString(R.string.information_tab_message_BusyBox_Not_Found)).setMessage(getString(R.string.information_tab_offerBusyBox));
 			builder.setPositiveButton(getResources().getString(R.string.yes), new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					Log.d(TAG, "Rooted but BusyBox is not available, offering busybox");
-					offerBusyBox();
+					RootTools.offerBusyBox(getActivity());
 				}
 			});
 			builder.setNegativeButton(getResources().getString(R.string.no), null);
@@ -136,19 +135,20 @@ public class InformationActivity extends Activity {
 			busybox = false;
 		}
 
-		systemStorageView = (TextView) findViewById(R.id.systemStorageView);
-		systemStorageBar = (ProgressBar) findViewById(R.id.systemStorageProgressBar);
+		systemStorageView = (TextView) view.findViewById(R.id.systemStorageView);
+		systemStorageBar = (ProgressBar) view.findViewById(R.id.systemStorageProgressBar);
 
-		dataStorageView = (TextView) findViewById(R.id.dataStorageView);
-		dataStorageBar = (ProgressBar) findViewById(R.id.dataStorageProgressBar);
+		dataStorageView = (TextView) view.findViewById(R.id.dataStorageView);
+		dataStorageBar = (ProgressBar) view.findViewById(R.id.dataStorageProgressBar);
 
-		externalStorageView = (TextView) findViewById(R.id.ExternalStorageView);
-		externalStorageBar = (ProgressBar) findViewById(R.id.ExternalStorageProgressBar);
+		externalStorageView = (TextView) view.findViewById(R.id.ExternalStorageView);
+		externalStorageBar = (ProgressBar) view.findViewById(R.id.ExternalStorageProgressBar);
 		updateStorageInformation();
+		return view;
 	}
 
 	@Override
-	protected void onResume() {
+	public void onResume() {
 		updateStorageInformation();
 		super.onResume();
 	}
@@ -163,9 +163,9 @@ public class InformationActivity extends Activity {
 			externalStorageView.setText(getExternalStorageSize() / (1024 * 1024) + "MB (" + getExternalStorageFreeSpace() / (1024 * 1024) + "MB free)");
 			externalStorageBar.setProgress((int) Math.round(((double) (getExternalStorageSize() - getExternalStorageFreeSpace()) / (double) getExternalStorageSize() * 100)));
 		} else {
-			findViewById(R.id.ExternalStorageLabel).setEnabled(false);
-			findViewById(R.id.ExternalStorageView).setEnabled(false);
-			findViewById(R.id.ExternalStorageProgressBar).setEnabled(false);
+			view.findViewById(R.id.ExternalStorageLabel).setEnabled(false);
+			view.findViewById(R.id.ExternalStorageView).setEnabled(false);
+			view.findViewById(R.id.ExternalStorageProgressBar).setEnabled(false);
 		}
 	}
 }

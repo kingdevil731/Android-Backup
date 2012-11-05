@@ -3,7 +3,6 @@ package com.Akkad.AndroidBackup;
 import java.util.Collections;
 import java.util.List;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
@@ -17,8 +16,10 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -27,7 +28,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ApplicationsActivity extends Activity {
+import com.actionbarsherlock.app.SherlockFragment;
+
+public class ApplicationsFragment extends SherlockFragment {
+
 	private static Dialog appPopupDialog;
 	static ListView backupList;
 	private static final String TAG = "ApplicationsActivity";
@@ -96,17 +100,9 @@ public class ApplicationsActivity extends Activity {
 		return false; // by default, fail to launch
 	}
 
-	private final Context context = this;
-
-	private Core core = new Core();
-
-	private ListView mListAppInfo;
-
-	private ApplicationInfo selectedApp;
-
 	public void createApplicationInformationDialog(String appName, String packageName, String appVersion, String apkPath, String dataPath) {
 		appPopupDialog.hide();
-		final Dialog applicationInformationDialog = new Dialog(context);
+		final Dialog applicationInformationDialog = new Dialog(getActivity());
 		applicationInformationDialog.setTitle(getString(R.string.applications_information_current_version_info_title));
 		applicationInformationDialog.setContentView(R.layout.application_info_dialog);
 
@@ -136,22 +132,30 @@ public class ApplicationsActivity extends Activity {
 		});
 	}
 
+	private Core core = new Core();
+
+	private ListView mListAppInfo;
+
+	private ApplicationInfo selectedApp;
+
 	public void createCurrentApplicationInformationDialog(ApplicationInfo app) {
 		String appVersion;
 		try {
-			PackageInfo info = getPackageManager().getPackageInfo(app.packageName, 0);
+			PackageInfo info = getActivity().getPackageManager().getPackageInfo(app.packageName, 0);
 			appVersion = info.versionName + " (" + info.versionCode + ")";
 		} catch (NameNotFoundException e) {
-			appVersion = context.getResources().getString(R.string.application_version_not_available);
+			appVersion = getActivity().getResources().getString(R.string.application_version_not_available);
 		}
 
-		createApplicationInformationDialog("" + app.loadLabel(getPackageManager()), app.packageName, appVersion, app.sourceDir, app.dataDir);
+		createApplicationInformationDialog("" + app.loadLabel(getActivity().getPackageManager()), app.packageName, appVersion, app.sourceDir, app.dataDir);
 	}
 
-	/** Called when the activity is first created. */
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.applications_layout); // set layout for the main screen
+	View view;
+
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+		view = inflater.inflate(R.layout.applications_layout, container, false);
+
 		refreshAppList(); // Populates the application list
 
 		mListAppInfo.setOnItemClickListener(new OnItemClickListener() { // implement event when an item on list view is selected
@@ -162,22 +166,22 @@ public class ApplicationsActivity extends Activity {
 						selectedApp = (ApplicationInfo) appInfoAdapter.getItem(pos);
 
 						// custom dialog
-						appPopupDialog = new Dialog(context);
+						appPopupDialog = new Dialog(getActivity());
 						appPopupDialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
 
 						appPopupDialog.setContentView(R.layout.applications_popup);
-						appPopupDialog.setFeatureDrawable(Window.FEATURE_LEFT_ICON, selectedApp.loadIcon(getPackageManager()));
+						appPopupDialog.setFeatureDrawable(Window.FEATURE_LEFT_ICON, selectedApp.loadIcon(getActivity().getPackageManager()));
 						appPopupDialog.setCanceledOnTouchOutside(true);
 
 						final TextView currentAppInfo = (TextView) appPopupDialog.findViewById(R.id.applicationsDialogCurrentAppInfo);
 
 						try {
-							PackageInfo info = getPackageManager().getPackageInfo(selectedApp.packageName, 0);
-							String appAndVersion = selectedApp.loadLabel(getPackageManager()) + " " + info.versionName;
+							PackageInfo info = getActivity().getPackageManager().getPackageInfo(selectedApp.packageName, 0);
+							String appAndVersion = selectedApp.loadLabel(getActivity().getPackageManager()) + " " + info.versionName;
 							appPopupDialog.setTitle(appAndVersion);
 							currentAppInfo.setText(appAndVersion + " (" + info.versionCode + ")");
 						} catch (NameNotFoundException e) {
-							appPopupDialog.setTitle(selectedApp.loadLabel(getPackageManager()));
+							appPopupDialog.setTitle(selectedApp.loadLabel(getActivity().getPackageManager()));
 						}
 
 						displayBackupOnAppPopup(selectedApp.packageName);
@@ -192,7 +196,7 @@ public class ApplicationsActivity extends Activity {
 						final Button dialogRunButton = (Button) appPopupDialog.findViewById(R.id.applicationsDialogButtonRun);
 						dialogRunButton.setOnClickListener(new OnClickListener() {
 							public void onClick(View v) {
-								launchApp(parent.getContext(), getPackageManager(), selectedApp.packageName); // launches the selected application
+								launchApp(parent.getContext(), getActivity().getPackageManager(), selectedApp.packageName); // launches the selected application
 								appPopupDialog.dismiss(); // closes the dialog
 							}
 						});
@@ -200,11 +204,12 @@ public class ApplicationsActivity extends Activity {
 						final Button dialogUninstallButton = (Button) appPopupDialog.findViewById(R.id.applicationsDialogButtonUninstall);
 						dialogUninstallButton.setOnClickListener(new OnClickListener() {
 							public void onClick(View v) {
-								if (InformationActivity.isRooted()) {
+								if (InformationFragment.isRooted()) {
 									if (core.applicationsType(selectedApp.sourceDir) == 1) { // A System App
-										final AlertDialog.Builder uninstallSystemAppWarningDialog = new AlertDialog.Builder(context);
+										final AlertDialog.Builder uninstallSystemAppWarningDialog = new AlertDialog.Builder(getActivity());
 										uninstallSystemAppWarningDialog.setTitle(getString(R.string.uninstall_system_app_warning_dialog_title));
-										uninstallSystemAppWarningDialog.setMessage(selectedApp.loadLabel(getPackageManager()) + " " + getString(R.string.uninstall_system_app_warning_dialog_text));
+										uninstallSystemAppWarningDialog.setMessage(selectedApp.loadLabel(getActivity().getPackageManager()) + " "
+												+ getString(R.string.uninstall_system_app_warning_dialog_text));
 										uninstallSystemAppWarningDialog.setIcon(android.R.drawable.ic_dialog_alert);
 										uninstallSystemAppWarningDialog.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
 											public void onClick(DialogInterface dialog, int id) {
@@ -232,14 +237,14 @@ public class ApplicationsActivity extends Activity {
 
 						Button dialogWipeDataButton = (Button) appPopupDialog.findViewById(R.id.applicationsDialogButtonWipeData);
 						// TODO this check is not needed
-						if (InformationActivity.isRooted()) {
+						if (InformationFragment.isRooted()) {
 							dialogWipeDataButton.setOnClickListener(new OnClickListener() {
 								@Override
 								public void onClick(View v) {
 									if (Core.wipeAppData(selectedApp.packageName)) {
-										Toast.makeText(ApplicationsActivity.this, selectedApp.loadLabel(getPackageManager()) + "'s data deleted", Toast.LENGTH_LONG).show();
+										Toast.makeText(getActivity(), selectedApp.loadLabel(getActivity().getPackageManager()) + "'s data deleted", Toast.LENGTH_LONG).show();
 									} else {
-										Toast.makeText(ApplicationsActivity.this, selectedApp.loadLabel(getPackageManager()) + "'s data not deleted", Toast.LENGTH_LONG).show();
+										Toast.makeText(getActivity(), selectedApp.loadLabel(getActivity().getPackageManager()) + "'s data not deleted", Toast.LENGTH_LONG).show();
 									}
 								}
 							});
@@ -257,26 +262,27 @@ public class ApplicationsActivity extends Activity {
 						dialogBackupButton.setOnClickListener(new OnClickListener() {
 							@Override
 							public void onClick(View v) {
-								String appName = selectedApp.loadLabel(getPackageManager()).toString();
+								String appName = selectedApp.loadLabel(getActivity().getPackageManager()).toString();
 
-								// core.backupApplicationApk(selectedApp.loadLabel(getPackageManager()).toString(), selectedApp.packageName, selectedApp.sourceDir);
-								core.backupApplication(selectedApp, getPackageManager());
+								// core.backupApplicationApk(selectedApp.loadLabel(getActivity().getPackageManager()).toString(), selectedApp.packageName, selectedApp.sourceDir);
+								core.backupApplication(selectedApp, getActivity().getPackageManager());
 								refreshAppList();
 								displayBackupOnAppPopup(selectedApp.packageName);
-								Toast.makeText(ApplicationsActivity.this, appName + " has been backed successfully", Toast.LENGTH_LONG).show();
+								Toast.makeText(getActivity(), appName + " has been backed successfully", Toast.LENGTH_LONG).show();
 							}
 						});
 
-						dialogRunButton.setEnabled(getPackageManager().getLaunchIntentForPackage(selectedApp.packageName) != null);
-						dialogBackupButton.setEnabled((core.applicationsType(selectedApp.sourceDir) == 1 && InformationActivity.isRooted() || core.applicationsType(selectedApp.sourceDir) != 1));
+						dialogRunButton.setEnabled(getActivity().getPackageManager().getLaunchIntentForPackage(selectedApp.packageName) != null);
+						dialogBackupButton.setEnabled((core.applicationsType(selectedApp.sourceDir) == 1 && InformationFragment.isRooted() || core.applicationsType(selectedApp.sourceDir) != 1));
 
 						appPopupDialog.show();
 					}
 				});
+		return view;
 	}
 
 	@Override
-	protected void onResume() {
+	public void onResume() {
 		refreshAppList();
 		super.onResume();
 	}
@@ -285,9 +291,9 @@ public class ApplicationsActivity extends Activity {
 	 * Refreshes the application list
 	 */
 	private void refreshAppList() {
-		mListAppInfo = (ListView) findViewById(R.id.lvApps); // load list application
-		AppInfoAdapter appInfoAdapter = new AppInfoAdapter(this, getInstalledApplication(this), getPackageManager()); // create new adapter
+		mListAppInfo = (ListView) view.findViewById(R.id.lvApps); // load list application
+		AppInfoAdapter appInfoAdapter = new AppInfoAdapter(getActivity(), getInstalledApplication(getActivity()), getActivity().getPackageManager()); // create new adapter
+
 		mListAppInfo.setAdapter(appInfoAdapter); // set adapter to list view
 	}
-
 }
