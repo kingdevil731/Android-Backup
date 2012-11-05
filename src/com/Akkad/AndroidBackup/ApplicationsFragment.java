@@ -50,21 +50,21 @@ public class ApplicationsFragment extends SherlockFragment {
 	 * 
 	 * @return list of installed applications
 	 */
-	public static List<ApplicationInfo> getInstalledApplication(Context context) {
-		PackageManager packageManager = context.getPackageManager();
+	public List<ApplicationInfo> getInstalledApplication() {
+		PackageManager packageManager = getActivity().getPackageManager();
 		List<ApplicationInfo> apps = packageManager.getInstalledApplications(0);
 
 		/* Loops through the app list and removes Android Backup & Android System */
 		boolean androidBackupRemoved = false, androidSystemRemoved = false;
 		for (int i = 0; i < apps.size(); i++) {
-			if (apps.get(i).loadLabel(packageManager).equals("Android Backup")) {
-				apps.remove(i);
+			if (apps.get(i).loadLabel(packageManager).equals(getActivity().getResources().getString(R.string.app_name))) {
+				apps.remove(i--);
 				androidBackupRemoved = true;
 				if (androidBackupRemoved && androidSystemRemoved) {
 					break;
 				}
 			} else if ((apps.get(i).loadLabel(packageManager).equals("Android System"))) {
-				apps.remove(i);
+				apps.remove(i--);
 				androidSystemRemoved = true;
 				if (androidBackupRemoved && androidSystemRemoved) {
 					break;
@@ -292,7 +292,7 @@ public class ApplicationsFragment extends SherlockFragment {
 	 */
 	private void refreshAppList() {
 		mListAppInfo = (ListView) view.findViewById(R.id.lvApps); // load list application
-		AppInfoAdapter appInfoAdapter = new AppInfoAdapter(getActivity(), getInstalledApplication(getActivity()), getActivity().getPackageManager()); // create new adapter
+		AppInfoAdapter appInfoAdapter = new AppInfoAdapter(getActivity(), getInstalledApplication(), getActivity().getPackageManager()); // create new adapter
 
 		mListAppInfo.setAdapter(appInfoAdapter); // set adapter to list view
 	}
